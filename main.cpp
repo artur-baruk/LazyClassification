@@ -8,6 +8,7 @@ int main() {
 	 * 2. Create reduced decision table.
 	 * 3. 
 	 * 4. 
+	 * 5.
 	 */
 
 	int input;
