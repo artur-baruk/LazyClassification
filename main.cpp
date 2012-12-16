@@ -6,7 +6,8 @@ int main() {
 	/*
 	 * 1. Read file with data and load data into decision table. 
 	 * 2. Create reduced decision table.
-	 *
+	 * 3. 
+	 * 4. 
 	 */
 
 	int input;
