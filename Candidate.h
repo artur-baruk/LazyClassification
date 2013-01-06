@@ -26,6 +26,20 @@ class Candidate {
 		int getLength() { return length; }
 
 		vector<int> getSupports() { return supports; }
+		
+		//porownanie atrybutow kandydata z podzbiorem atrybutow transakcji
+		bool attributesEquals(vector<float>* p_attributes) 
+		{
+			bool result = true;
+			for(int i = 0; i<attributes.size();i++)
+			{
+				if (attributes[i] != p_attributes->at(i)) {
+					result = false;
+				}
+			}
+			return result;
+
+		}
 };
  
 #endif
