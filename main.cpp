@@ -1,10 +1,12 @@
 #include <iostream>
 #include <vector>
+#include <map>
 #include "Tuple.h"
 #include "Candidate.h"
 #include "LazyClassificator.h"
 #include "ReducedTableCreator.h"
-
+#include "HashTreeNode.h"
+#include "HashTree.h"
 
 vector<Tuple> table;
 
@@ -16,6 +18,38 @@ int main() {
 	 * 2. Create reduced decision table.
 	 * 3. Find contrast patterns and calculate support.
 	 */
+	 
+	/*<testy drzewa>*/
+
+	vector<Candidate*> candidates;
+
+	vector<float>* attr1 = new vector<float>();
+	attr1->push_back(1.0);
+	attr1->push_back(2.0);
+		
+	vector<float>* attr2 = new vector<float>();
+	attr2->push_back(4.0);
+	attr2->push_back(3.0);
+		
+	vector<float>* attr3 = new vector<float>();
+	attr3->push_back(2.0);
+	attr3->push_back(5.0);
+
+	vector<int>* sup1 = new vector<int>();
+	sup1->push_back(0);
+	sup1->push_back(0);
+
+	candidates.push_back(new Candidate(attr1, 2, sup1 ));
+	candidates.push_back(new Candidate(attr2, 2, sup1 ));
+	candidates.push_back(new Candidate(attr3, 2, sup1 ));
+
+	HashTree* ht = new HashTree(candidates,2);
+	
+	ht->printHashTree();
+
+	/*</testy drzewa>*/
+
+	getchar(); 
 	
 	vector<float> vec1;
 	vec1.push_back(1.0);
