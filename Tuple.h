@@ -27,6 +27,20 @@ class Tuple {
 		vector<float> getAttributes()  { return attributes; }
 
 		void setAttribute(int index, float value) { attributes[index] = value; } 
+		
+		//TODO: generowanie podzbiorow k-elementowych z transakcji
+		vector<vector<float>>* getSubSets(int k)
+		{
+			vector<vector<float>>* subsets = new vector<vector<float>>();
+			vector<float>* attributes_dense;
+			for(int i=0; i<attributes.size(); i++)
+			{
+				attributes_dense->push_back(attributes[i]); //zakladam ze w attributes moga byc luki wiec przepisuje. Zakladam tez ze attributes jest uporzadkowany rosnaco
+			}
+			
+			return subsets;
+							
+		}
 };
  
 #endif
