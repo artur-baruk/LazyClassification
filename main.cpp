@@ -5,7 +5,6 @@
 #include "Tuple.h"
 #include "Candidate.h"
 #include "LazyClassificator.h"
-#include "ReducedTableCreator.h"
 #include "HashTreeNode.h"
 #include "HashTree.h"
 #include "TupleCreator.h"
