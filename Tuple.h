@@ -40,19 +40,35 @@ class Tuple {
 
 		float getAttribute(int index) { return (*attributes)[index]; }
 
-		//TODO: generowanie podzbiorow k-elementowych z transakcji
-		std::vector<std::vector<float> >* getSubSets(int k)
+		// generowanie podzbiorow k-elementowych z transakcji
+		std::vector<std::vector<float>*>* getSubSets(int k)
 		{
-			std::vector<std::vector<float> >* subsets = new std::vector<std::vector<float> >();
+			std::vector<std::vector<float>*>* subsets = new std::vector<std::vector<float>*>();
 			std::vector<float>* attributes_dense;
+			std::vector<float>* subset;
+
 			for(int i=0; i<attributes->size(); i++)
 			{
 				attributes_dense->push_back((*attributes)[i]); //zakladam ze w attributes moga byc luki wiec przepisuje. Zakladam tez ze attributes jest uporzadkowany rosnaco
 			}
-
+			
+			int num_of_attributes = attributes_dense->size(); //ile elementow ma transakcja
+			int subset_size = k;
+			int last_start = num_of_attributes - subset_size +1; //attributes are ordered, the starting items can only by from 1 to last_start
+	
+			for(int i=0; i<last_start; i++) 
+			{
+				for(int j=i+1; j<num_of_attributes; j++)
+				{
+					subset = new std::vector<float>();
+					subset->push_back(attributes_dense->at(i));
+					subset->push_back(attributes_dense->at(j));
+					subsets->push_back(subset);
+				}
+			}
 			return subsets;
-
 		}
+
 };
 
 #endif
