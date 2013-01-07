@@ -1,4 +1,5 @@
 #include <iostream>
+#include <stdio.h>
 #include <vector>
 #include <map>
 #include "Tuple.h"
@@ -7,18 +8,17 @@
 #include "ReducedTableCreator.h"
 #include "HashTreeNode.h"
 #include "HashTree.h"
-
-vector<Tuple> table;
+#include "TupleCreator.h"
 
 int main() {
 	std::cout << "JEPs classification";
 
 	/*
-	 * 1. Read file with data and load data into decision table. 
+	 * 1. Read file with data and load data into decision table.
 	 * 2. Create reduced decision table.
 	 * 3. Find contrast patterns and calculate support.
 	 */
-	 
+
 	/*<testy drzewa>*/
 
 	vector<Candidate*> candidates;
@@ -26,11 +26,11 @@ int main() {
 	vector<float>* attr1 = new vector<float>();
 	attr1->push_back(1.0);
 	attr1->push_back(2.0);
-		
+
 	vector<float>* attr2 = new vector<float>();
 	attr2->push_back(4.0);
 	attr2->push_back(3.0);
-		
+
 	vector<float>* attr3 = new vector<float>();
 	attr3->push_back(2.0);
 	attr3->push_back(5.0);
@@ -44,35 +44,54 @@ int main() {
 	candidates.push_back(new Candidate(attr3, 2, sup1 ));
 
 	HashTree* ht = new HashTree(candidates,2);
-	
+
 	ht->printHashTree();
 
 	/*</testy drzewa>*/
 
-	getchar(); 
-	
-	vector<float> vec1;
-	vec1.push_back(1.0);
-	vec1.push_back(3.0);
-	vec1.push_back(2.0);
-	Tuple t1 = Tuple(vec1, 2);
-	Tuple t3 = Tuple(vec1, 3);
-	table.push_back(t1);
-	table.push_back(t3);
-	vector<float> vec2;
-	vec2.push_back(1.0);
-	vec2.push_back(2.0);
-	vec2.push_back(2.0);
-	Tuple t2 = Tuple(vec2, 4);
+	getchar();
 
-	LazyClassificator classificator;
-	ReducedTableCreator reducedTableCreator = ReducedTableCreator(table, t2);
-	vector<Tuple> table_red = reducedTableCreator.getReducedTable(table, t2);
-	for (int i=0; i < table_red.size(); i++) {
-		std::cout << table_red[i].getTupleClass();
-		std::cout << table_red[i].getAttributes()[0];
-		std::cout << table_red[i].getAttributes()[1];
-		std::cout << table_red[i].getAttributes()[2] << std::endl;
+	vector<Tuple*> table;
+
+	vector<Type> types;
+    types.push_back(AttrClass);
+    types.push_back(AttrInteger);
+    types.push_back(AttrInteger);
+    types.push_back(AttrInteger);
+    types.push_back(AttrInteger);
+
+	readTuples("input.txt", types, table);
+
+    cout << "Dataset read:" << endl;
+	for(int i = 0; i < table.size(); ++i) {
+	    Tuple* t = table[i];
+        std::cout << "Tuple class: " << t->getTupleClass() << ", attributes: ";
+	    for(int j = 0; j < (*t->getAttributes()).size(); ++j) {
+            cout << t->getAttribute(j) << ", ";
+
+        }
+	    cout << endl;
+	}
+
+	Tuple* t2 = new Tuple(4, 1);
+	vector<float>* attrs = t2->getAttributes();
+	(*attrs)[0] = 1.0;
+	(*attrs)[1] = 2.0;
+	(*attrs)[2] = 2.0;
+	(*attrs)[3] = 1.0;
+
+	getReducedTable(&table, t2);
+
+
+	cout << "Reduced table:" << endl;
+	for(int i = 0; i < table.size(); ++i) {
+	    Tuple* t = table[i];
+        std::cout << "Tuple class: " << t->getTupleClass() << ", attributes: ";
+	    for(int j = 0; j < (*t->getAttributes()).size(); ++j) {
+            cout << t->getAttribute(j) << ", ";
+
+        }
+	    cout << endl;
 	}
 
 	int input;
