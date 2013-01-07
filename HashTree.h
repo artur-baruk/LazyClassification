@@ -52,6 +52,25 @@ class HashTree {
 			HashTreeNode* current_node = root;
 			root->print();
 		}
+		
+		int getMaxLevel() {
+			return maxLevel;
+		}
+
+		//bierze podzbior transakcji i jedzie nim do liscia
+		//jak w lisciu jest taki sam kandydat jak podzbior transakcji to podbija jego wsparcie
+		void countSupport(vector<int>* p_subset, int tClass)
+		{
+			HashTreeNode* current_node = root;
+			int hash;
+			for(int i=0; i<maxLevel; i++) 
+			{
+				hash = p_subset->at(i) % hash_arg;
+				current_node = current_node->getChild(hash);
+			}
+			//sprawdzamy i podbijamy supporty
+			current_node->countCandidatesSupport(p_subset,tClass);
+		}
 
 };
  
