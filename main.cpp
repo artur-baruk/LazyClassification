@@ -2,11 +2,11 @@
 #include <stdio.h>
 #include <vector>
 #include <map>
-#include "Tuple.h"
 #include "Candidate.h"
-#include "LazyClassificator.h"
 #include "HashTreeNode.h"
 #include "HashTree.h"
+#include "Tuple.h"
+#include "LazyClassificator.h"
 #include "TupleCreator.h"
 
 int main() {
