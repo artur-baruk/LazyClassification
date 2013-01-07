@@ -10,25 +10,21 @@ using namespace std;
  */
 class Candidate {
 	private:
-		vector<float> attributes;		//nominal attributes like Temperature{Low=1.0, Mild=2.0, High=3.0} 
-		int length;						//number of attributes in the candidate (that are not equal to 0.0)
+		vector<int> attributes;			//nominal attributes like Temperature{Low=1, Mild=2, High=3} 
 		vector<int> supports;			//vector of supports for particular classes (we usually have two classes)
  
 	public:
-		Candidate(vector<float>* attributes, int length, vector<int>* supports) {
+		Candidate(vector<int>* attributes, vector<int>* supports) {
 			this->attributes = *attributes;
-			this->length = length;
 			this->supports = *supports;
 		}
 
-		vector<float> getAttributes()  { return attributes; }
-
-		int getLength() { return length; }
+		vector<int> getAttributes()  { return attributes; }
 
 		vector<int> getSupports() { return supports; }
 		
 		//porownanie atrybutow kandydata z podzbiorem atrybutow transakcji
-		bool attributesEquals(vector<float>* p_attributes) 
+		bool attributesEquals(vector<int>* p_attributes) 
 		{
 			for(int i = 0; i<attributes.size();i++)
 			{
@@ -38,6 +34,41 @@ class Candidate {
 			}
 			return true;
 
+		}
+
+		/*
+		* A Candidate is a contrast pattern iff support of one class is not equal to zero and support of other classes is equal to zero.
+		*/
+		bool isContrastPattern() {
+			int counterOfZeroSupports = 0;
+			for(int i = 0; i < supports.size(); i++) {
+				if(supports[i] == 0) {
+					counterOfZeroSupports++;
+				}
+			}
+			if(counterOfZeroSupports == supports.size() - 1) {
+				return true;
+			}
+			return false;
+		}
+
+		bool isJoinable(Candidate& other) {
+			if(attributes.size() != other.attributes.size()) {
+				return false;
+			}
+			for(int i = 0; i < attributes.size() - 1; i++) {
+				if(attributes[i] != other.attributes[i]) {
+					return false;
+				}
+			}
+			if(attributes.back() == other.attributes.back()) {
+				return false;
+			}
+			return true;
+		}
+
+		void incrementSupport(int tClass) {
+			supports[tClass] = supports[tClass] + 1;
 		}
 };
  

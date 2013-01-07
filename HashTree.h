@@ -36,7 +36,7 @@ class HashTree {
 		{
 			HashTreeNode* current_node = root;
 			int hash;
-			vector<float> attributes;
+			vector<int> attributes;
 			for(int i=0; i<maxLevel; i++) 
 			{
 				attributes = p_candidate->getAttributes();

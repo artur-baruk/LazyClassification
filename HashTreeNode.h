@@ -52,7 +52,7 @@ class HashTreeNode {
 		//do testow rekurencyjne drukowanie wezlow
 		void print()
 		{
-			vector<float> attributes;
+			vector<int> attributes;
 			cout << endl << "level: " << level << endl;
 			cout << "num of children: " << children.size() << " " << endl;
 			cout << "candidates:" << endl;

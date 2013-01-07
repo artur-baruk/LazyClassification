@@ -8,6 +8,9 @@
 #include "Tuple.h"
 #include "LazyClassificator.h"
 #include "TupleCreator.h"
+#include "CandidateGenerator.h"
+
+void candidateGeneratorTest(vector<Tuple*>& table_red);
 
 int main() {
 	std::cout << "JEPs classification";
@@ -22,25 +25,25 @@ int main() {
 
 	vector<Candidate*> candidates;
 
-	vector<float>* attr1 = new vector<float>();
-	attr1->push_back(1.0);
-	attr1->push_back(2.0);
+	vector<int>* attr1 = new vector<int>();
+	attr1->push_back(1);
+	attr1->push_back(2);
 
-	vector<float>* attr2 = new vector<float>();
-	attr2->push_back(4.0);
-	attr2->push_back(3.0);
+	vector<int>* attr2 = new vector<int>();
+	attr2->push_back(4);
+	attr2->push_back(3);
 
-	vector<float>* attr3 = new vector<float>();
-	attr3->push_back(2.0);
-	attr3->push_back(5.0);
+	vector<int>* attr3 = new vector<int>();
+	attr3->push_back(2);
+	attr3->push_back(5);
 
 	vector<int>* sup1 = new vector<int>();
 	sup1->push_back(0);
 	sup1->push_back(0);
 
-	candidates.push_back(new Candidate(attr1, 2, sup1 ));
-	candidates.push_back(new Candidate(attr2, 2, sup1 ));
-	candidates.push_back(new Candidate(attr3, 2, sup1 ));
+	candidates.push_back(new Candidate(attr1, sup1 ));
+	candidates.push_back(new Candidate(attr2, sup1 ));
+	candidates.push_back(new Candidate(attr3, sup1 ));
 
 	HashTree* ht = new HashTree(candidates,2);
 
@@ -93,8 +96,16 @@ int main() {
 	    cout << endl;
 	}
 
+	candidateGeneratorTest(table);
+
 	int input;
 	std::cin >> input;
 	return 0;
+}
+
+void candidateGeneratorTest(vector<Tuple*>& table_red) {
+	CandidateGenerator candidateGenerator = CandidateGenerator(table_red, 3);
+	candidateGenerator.execute();
+	candidateGenerator.printSupportsOfCandiadtesLengthOne();
 }
 

@@ -7,6 +7,8 @@
 #include "stringtools.h"
 #include "Tuple.h"
 
+const float null_value = -1.0f;
+
 /**
  * Tuple attribute types
  */
