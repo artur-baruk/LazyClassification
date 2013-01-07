@@ -73,6 +73,17 @@ class HashTreeNode {
 			}
 			
 		}
+		
+		void countCandidatesSupport(vector<int>* p_subset, int tClass) 
+		{
+			for(int i=0; i<candidates.size();i++) 
+			{
+				if(candidates[i]->attributesEquals(p_subset)) //jezeli kandydat == podzbior
+				{
+					candidates[i]->incrementSupport(tClass);
+				}
+			}
+		}
 
 };
  
