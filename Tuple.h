@@ -41,32 +41,51 @@ class Tuple {
 		float getAttribute(int index) { return (*attributes)[index]; }
 
 		// generowanie podzbiorow k-elementowych z transakcji
-		std::vector<std::vector<float>*>* getSubSets(int k)
+		std::vector<std::vector<int>*>* getSubSets(int k)
 		{
-			std::vector<std::vector<float>*>* subsets = new std::vector<std::vector<float>*>();
-			std::vector<float>* attributes_dense;
-			std::vector<float>* subset;
+			std::vector<std::vector<int>*>* subsets = new std::vector<std::vector<int>*>();
+			std::vector<int>* attributes_dense;
+			std::vector<int>* subset;
 
 			for(int i=0; i<attributes->size(); i++)
 			{
-				attributes_dense->push_back((*attributes)[i]); //zakladam ze w attributes moga byc luki wiec przepisuje. Zakladam tez ze attributes jest uporzadkowany rosnaco
+				if(attributes->at(i) !=  -1) 
+				{
+					attributes_dense->push_back(i);
+				}
 			}
 			
 			int num_of_attributes = attributes_dense->size(); //ile elementow ma transakcja
 			int subset_size = k;
 			int last_start = num_of_attributes - subset_size +1; //attributes are ordered, the starting items can only by from 1 to last_start
-	
+			
+			if (num_of_attributes < subset_size)
+				return subsets;
+
 			for(int i=0; i<last_start; i++) 
 			{
 				for(int j=i+1; j<num_of_attributes; j++)
 				{
-					subset = new std::vector<float>();
+					subset = new std::vector<int>();
 					subset->push_back(attributes_dense->at(i));
 					subset->push_back(attributes_dense->at(j));
 					subsets->push_back(subset);
 				}
 			}
 			return subsets;
+		}
+
+		//bierze jedna transakcje, rozbija na podzbiory i jedzie każdym podzbiorem po drzewie az do liscia.
+		//w lisciu sprawdza czy jest kandydat rowny temu podzbiorowi. Jezeli jest to podbija wsparcie kandydata o 1
+		//przed uzyciem tej funkcji trzeba zbudowac drzewo k-elementowych kandydatow. HashTree* ht = new HashTree(candidates,k);
+		void subset_and_count(HashTree* tree) 
+		{
+			int k = tree->getMaxLevel();
+			std::vector<std::vector<int>*>* subsets = getSubSets(k);
+			for(int i=0; i<subsets->size();i++) 
+			{
+				tree->countSupport(subsets->at(i),tupleClass);
+			}
 		}
 
 };
