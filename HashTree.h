@@ -41,7 +41,7 @@ class HashTree {
 			{
 				attributes = p_candidate->getAttributes();
 				hash = (int)attributes[i] % hash_arg;
-				current_node = current_node->getChild(hash);
+				current_node = current_node->getChild(hash,true);
 			}
 			current_node->insertCandidate(p_candidate);
 		}
@@ -66,7 +66,10 @@ class HashTree {
 			for(int i=0; i<maxLevel; i++) 
 			{
 				hash = p_subset->at(i) % hash_arg;
-				current_node = current_node->getChild(hash);
+				current_node = current_node->getChild(hash,false);
+				if(current_node == 0) { 
+					return;
+				}
 			}
 			//sprawdzamy i podbijamy supporty
 			current_node->countCandidatesSupport(p_subset,tClass);
