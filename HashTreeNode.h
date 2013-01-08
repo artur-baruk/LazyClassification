@@ -30,14 +30,20 @@ class HashTreeNode {
 		};
 
 		//zwraca wskaznik na potomka o odpowiednim haszu. W przypadku kiedy taki potomek nie istnieje to go tworzy.
-		HashTreeNode* getChild(int hash) 
+		HashTreeNode* getChild(int hash, bool insertEnabled) 
 		{
 			map<int,HashTreeNode*>::iterator it;
 			pair<map<int,HashTreeNode*>::iterator,bool> ret;
 			it = children.find(hash);
-			if (it == children.end()) {
-			  ret =	children.insert(pair<int,HashTreeNode*>(hash,new HashTreeNode(level+1)));
-			  it = ret.first;
+			if (it == children.end()) 
+			{
+				if (insertEnabled) {
+					ret =	children.insert(pair<int,HashTreeNode*>(hash,new HashTreeNode(level+1)));
+					it = ret.first;
+				}
+				else { 
+					return 0; 
+				}
 			}
 			return it->second;
 		}
