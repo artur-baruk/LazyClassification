@@ -44,7 +44,7 @@ class Tuple {
 		std::vector<std::vector<int>*>* getSubSets(int k)
 		{
 			std::vector<std::vector<int>*>* subsets = new std::vector<std::vector<int>*>();
-			std::vector<int>* attributes_dense;
+			std::vector<int>* attributes_dense = new std::vector<int>();
 			std::vector<int>* subset;
 
 			for(int i=0; i<attributes->size(); i++)

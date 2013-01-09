@@ -5,6 +5,7 @@
 #include <iostream>
 #include "Tuple.h"
 #include "Candidate.h"
+#include "HashTree.h"
 
 using namespace std;
 
@@ -14,19 +15,17 @@ using namespace std;
 class CandidateGenerator {
 	private:
 		vector<Tuple*>& reducedTable;
-		vector<vector<Candidate>> candidates;
+		vector<vector<Candidate*>*> candidates;
 		vector<Candidate> contrastPatterns;				//exists only in one class and not outside that class
 		vector<vector<int>> supportsOfCandidates;		//vector to store supports of candidates of length 1
 		const int numberOfClasses;
+		HashTree* hashTree;
 
 		void findOneLengthCandidates() {
 			if(reducedTable.size() == 0) {
 				cout << "Empty reduced table";
 				exit(0);
 			}
-
-			//we will have as many candidates(reducedTable[0].getAttributes().size()) as we have attributes in the tuple
-			//so eg 4 attributes in tuple mean 4 candidates
 
 			const int numberOfCandidates = reducedTable[0]->getAttributes()->size(); 
 			
@@ -50,63 +49,65 @@ class CandidateGenerator {
 			}
 
 			//create and insert candidate
-			vector<Candidate> candidatesOfLengthOne;
+			vector<Candidate*>* candidatesOfLengthOne = new vector<Candidate*>();
 			for(int i = 0; i < numberOfCandidates; i++) {
 				int candidateId = i + 1;
-				vector<int> attributes;
-				attributes.push_back(candidateId);
-				Candidate candidate = Candidate(&attributes, &supportsOfCandidates[i]);
-				cout << "Candidate " << candidateId << " is contast pattern: " << candidate.isContrastPattern() << endl;  
-				if(candidate.isContrastPattern()) {
-					contrastPatterns.push_back(candidate);
+				vector<int>* attributes = new vector<int>();
+				attributes->push_back(candidateId);
+				Candidate* candidate =  new Candidate(attributes, &supportsOfCandidates[i]);
+				cout << "Candidate " << candidateId << " is contast pattern: " << candidate->isContrastPattern() << endl;  
+				if(candidate->isContrastPattern()) {
+					contrastPatterns.push_back(*candidate);
 				} else {
-					candidatesOfLengthOne.push_back(candidate);
+					candidatesOfLengthOne->push_back(candidate);
 				}
 			}
 			candidates.push_back(candidatesOfLengthOne);
-			cout << "Candidate One is joinable with candidate Two " << candidatesOfLengthOne[0].isJoinable(candidatesOfLengthOne[1]) << endl;
+
+			cout << "Candidate One is joinable with candidate Two " << (*candidatesOfLengthOne)[0]->isJoinable((*candidatesOfLengthOne)[1]) << endl;
 		}
 
 		/*
 		* Generates candidates of length k+1 based on candidates of length k.
 		* Return true if there are at least two candidates generated (but not contast patterns).
 		*/
-		bool generateCandidatesLengthKPlusOne(vector<Candidate>& candidatesLenkthK) {
-			vector<int> candidatesLengthKPlusOne;
-			for(int i = 0; i < candidatesLenkthK.size(); i++) {
-				for(int j = i + 1; j < candidatesLenkthK.size(); j++) {
-					if(candidatesLenkthK[i].isJoinable(candidatesLenkthK[j])) {
-						vector<int> attributes;
-						joinCandidates(attributes, candidatesLenkthK[i], candidatesLenkthK[j]);
+		vector<Candidate*>* generateCandidatesLengthKPlusOne(vector<Candidate*>* candidatesLenkthK) {
+			vector<Candidate*>* candidatesLengthKPlusOne =  new vector<Candidate*>();			//it can contain contrast patterns as well
+			for(int i = 0; i < candidatesLenkthK->size(); i++) {
+				for(int j = i + 1; j < candidatesLenkthK->size(); j++) {
+					if((*candidatesLenkthK)[i]->isJoinable((*candidatesLenkthK)[j])) {
+						vector<int>* attributes =  new vector<int>();
+						joinCandidates(attributes, (*candidatesLenkthK)[i], (*candidatesLenkthK)[j]);
 						cout << "Joining " << i+1 << " with " << j+1 << endl;
-						//@TODO calculate supports of generated candidates
-						//Candidate Candidate = Candidate(...);
-						//check if it is contrast patterns
-						/*
-							if(candidate.isContrastPattern()) {
-								contrastPatterns.push_back(candidate);
-							} else {
-								candidatesOfLengthOne.push_back(candidate);
-							}
-						*/
+						
+						Candidate* candidate = new Candidate(attributes);
+						candidatesLengthKPlusOne->push_back(candidate);				
 					}
 				}
 			}
-			if(candidatesLengthKPlusOne.size() <= 1) {
-				return false;
-			}
-			return true;
+			candidates.push_back(candidatesLengthKPlusOne);
+			hashTree = new HashTree(*candidatesLengthKPlusOne, candidates.size());
+			assignSupportsToCandidates(hashTree);
+			delete hashTree;
+			return candidatesLengthKPlusOne;
 		}
 
-		void joinCandidates(vector<int>& attributes, Candidate& first, Candidate& second) {
-			for(int i = 0; i < first.getAttributes().size(); i++) {
-				attributes.push_back(first.getAttributes()[i]);
+		//does one scan of database and determine supports
+		void assignSupportsToCandidates(HashTree* hashTree) {
+			for(unsigned long i = 0; i < reducedTable.size(); i++) {
+				reducedTable[i]->subset_and_count(hashTree);
 			}
-			attributes.push_back(second.getAttributes().back());
+		}
+
+		void joinCandidates(vector<int>* attributes, Candidate* first, Candidate* second) {
+			for(int i = 0; i < first->getAttributes().size(); i++) {
+				attributes->push_back(first->getAttributes()[i]);
+			}
+			attributes->push_back(second->getAttributes().back());
 		}
 
 	public:
-		CandidateGenerator(vector<Tuple*>& tReducedTable, const int tNumberOfClasses): reducedTable(tReducedTable), numberOfClasses(tNumberOfClasses) {}
+		CandidateGenerator(vector<Tuple*>& tReducedTable, const int tNumberOfClasses): reducedTable(tReducedTable), numberOfClasses(tNumberOfClasses) { }
 
 		void printSupportsOfCandiadtesLengthOne() {
 			for(int i = 0; i < supportsOfCandidates.size(); i++) {
@@ -120,17 +121,18 @@ class CandidateGenerator {
 
 		void execute() {
 			findOneLengthCandidates();
-			if(candidates[0].size() >= 2) {
+			if(candidates[0]->size() >= 2) {
 				int k = 1;		//initial length of candidates that will be incremented
 				while(1) {
-					if(!generateCandidatesLengthKPlusOne(candidates[k-1])) {
+					if(generateCandidatesLengthKPlusOne(candidates[k-1])->size() <= 1) {
 						break;	//the process of generating patterns has finished
 					}
+					k++;
 				}
 			}
 		}
 
-		vector<vector<Candidate>>& getCandidates() { return candidates; }
+		vector<vector<Candidate*>*>& getCandidates() { return candidates; }
 		
 };
  

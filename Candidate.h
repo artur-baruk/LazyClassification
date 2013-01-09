@@ -19,13 +19,17 @@ class Candidate {
 			this->supports = *supports;
 		}
 
+		Candidate(vector<int>* attributes) { //in can be invoked in inte two-arguments constructor
+			this->attributes = *attributes;
+		}
+
 		vector<int> getAttributes()  { return attributes; }
 
 		vector<int> getSupports() { return supports; }
 		
 		//porownanie atrybutow kandydata z podzbiorem atrybutow transakcji
 		bool attributesEquals(vector<int>* p_attributes) 
-		{
+		{	
 			for(int i = 0; i<attributes.size();i++)
 			{
 				if (attributes[i] != p_attributes->at(i)) {
@@ -52,16 +56,16 @@ class Candidate {
 			return false;
 		}
 
-		bool isJoinable(Candidate& other) {
-			if(attributes.size() != other.attributes.size()) {
+		bool isJoinable(Candidate* other) {
+			if(attributes.size() != other->attributes.size()) {
 				return false;
 			}
 			for(int i = 0; i < attributes.size() - 1; i++) {
-				if(attributes[i] != other.attributes[i]) {
+				if(attributes[i] != other->attributes[i]) {
 					return false;
 				}
 			}
-			if(attributes.back() == other.attributes.back()) {
+			if(attributes.back() == other->attributes.back()) {
 				return false;
 			}
 			return true;
