@@ -40,6 +40,8 @@ class Tuple {
 
 		float getAttribute(int index) { return (*attributes)[index]; }
 
+		
+			
 		// generowanie podzbiorow k-elementowych z transakcji
 		std::vector<std::vector<int>*>* getSubSets(int k)
 		{
@@ -57,20 +59,22 @@ class Tuple {
 			
 			int num_of_attributes = attributes_dense->size(); //ile elementow ma transakcja
 			int subset_size = k;
-			int last_start = num_of_attributes - subset_size +1; //attributes are ordered, the starting items can only by from 1 to last_start
-			
+
 			if (num_of_attributes < subset_size)
 				return subsets;
+			
+			Combination* c = new Combination(num_of_attributes,subset_size);
+			int num_of_subsets = c->Choose(num_of_attributes,subset_size);
 
-			for(int i=0; i<last_start; i++) 
+			for (int i = 0 ; i < num_of_subsets; ++i)
 			{
-				for(int j=i+1; j<num_of_attributes; j++)
+				subset = new std::vector<int>();
+				for(int j = 0; j<subset_size; j++) 
 				{
-					subset = new std::vector<int>();
-					subset->push_back(attributes_dense->at(i));
-					subset->push_back(attributes_dense->at(j));
-					subsets->push_back(subset);
+					subset->push_back(attributes_dense->at(c->data[j]));
 				}
+				subsets->push_back(subset);
+				c = c->Successor();
 			}
 			return subsets;
 		}
