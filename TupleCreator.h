@@ -20,14 +20,26 @@ enum Type
     AttrClass
 };
 
+int getKeyIndex(vector<std::string>* vector, std::string key)
+{
+    for(int i = 0; i < vector->size(); ++i) {
+        if(vector->at(i) == key)
+            return i;
+    }
+    return -1;
+}
+
 /**
  * Reads dataset from csv file
+ * Returns class count
  */
-void readTuples(const std::string& fileName, const std::vector<Type>& types, std::vector<Tuple*>& tuples) {
+int readTuples(const std::string& fileName, const std::vector<Type>& types, std::vector<Tuple*>& tuples) {
 
     std::string temp;
 	std::ifstream inputFile;
 	inputFile.open(fileName.c_str());
+
+    std::vector<std::string> keys;
 
     while(!inputFile.eof())
     {
@@ -36,11 +48,18 @@ void readTuples(const std::string& fileName, const std::vector<Type>& types, std
         split(temp, ',', strs);
         Tuple* t = new Tuple(strs.size() - 1);
         int attrCount = 0;
+        int classKeyIndex;
         for (int i = 0; i < strs.size(); ++i) {
             switch(types[i])
             {
                 case AttrClass:
-                    t->setTupleClass(strToInt(strs[i]));
+                    classKeyIndex = getKeyIndex(&keys, strs[i]);
+                    if(classKeyIndex == -1) {
+                        keys.push_back(strs[i]);
+                        t->setTupleClass(keys.size() - 1);
+                    } else {
+                        t->setTupleClass(classKeyIndex);
+                    }
                     break;
                 case AttrInteger:
                     t->setAttribute(attrCount++, strToFloat(strs[i]));
@@ -50,16 +69,17 @@ void readTuples(const std::string& fileName, const std::vector<Type>& types, std
                     break;
                 case AttrCategorical:
                     //TODO hashmapa itp
+                    //tak jak w klasach tylko dla kazdego atrubutu inna mapa
                     break;
             }
         }
         tuples.push_back(t);
     }
-    //TODO po wszystkim trzeba znormalizowaæ atrybuty typu real
+    //TODO po wszystkim trzeba znormalizowaa atrybuty typu real
 
 	inputFile.close();
 
-    return;
+    return keys.size();
 }
 
 void getReducedTable(std::vector<Tuple*>* table, Tuple* tuple) {

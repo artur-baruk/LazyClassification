@@ -63,7 +63,7 @@ int main() {
     types.push_back(AttrInteger);
     types.push_back(AttrInteger);
 
-	readTuples("input.txt", types, table);
+	readTuples("input2.txt", types, table);
 
     cout << "Dataset read:" << endl;
 	for(int i = 0; i < table.size(); ++i) {
