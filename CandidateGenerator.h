@@ -79,8 +79,8 @@ class CandidateGenerator {
 						vector<int>* attributes =  new vector<int>();
 						joinCandidates(attributes, (*candidatesLenkthK)[i], (*candidatesLenkthK)[j]);
 						cout << "Joining " << i+1 << " with " << j+1 << endl;
-						
-						Candidate* candidate = new Candidate(attributes);
+						vector<int>* supports = new vector<int>(numberOfClasses);
+						Candidate* candidate = new Candidate(attributes,supports);
 						candidatesLengthKPlusOne->push_back(candidate);				
 					}
 				}
