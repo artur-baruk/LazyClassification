@@ -55,6 +55,7 @@ int main() {
 	getchar();
 
 	vector<Tuple*> table;
+	vector<int> objectsInClassesCount;
 
 	vector<Type> types;
     types.push_back(AttrClass);
@@ -63,7 +64,7 @@ int main() {
     types.push_back(AttrInteger);
     types.push_back(AttrInteger);
 
-	readTuples("input.txt", types, table);
+	readTuples("input2.txt", types, table, &objectsInClassesCount);
 
     cout << "Dataset read:" << endl;
 	for(int i = 0; i < table.size(); ++i) {
