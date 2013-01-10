@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <vector>
 #include <map>
+#include "Combination.h"
 #include "Candidate.h"
 #include "HashTreeNode.h"
 #include "HashTree.h"
