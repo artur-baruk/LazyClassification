@@ -146,6 +146,8 @@ class CandidateGenerator {
 		}
 
 		vector<vector<Candidate*>*>& getCandidates() { return candidates; }
+
+		vector<Candidate*>& getContrastPatterns() { return contrastPatterns; }
 		
 };
  
