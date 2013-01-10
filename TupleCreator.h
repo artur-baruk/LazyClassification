@@ -33,7 +33,7 @@ int getKeyIndex(vector<std::string>* vector, std::string key)
  * Reads dataset from csv file
  * Returns class count
  */
-int readTuples(const std::string& fileName, const std::vector<Type>& types, std::vector<Tuple*>& tuples) {
+int readTuples(const std::string& fileName, const std::vector<Type>& types, std::vector<Tuple*>& tuples, std::vector<int>* objectsInClassesCount) {
 
     std::string temp;
 	std::ifstream inputFile;
@@ -57,8 +57,10 @@ int readTuples(const std::string& fileName, const std::vector<Type>& types, std:
                     if(classKeyIndex == -1) {
                         keys.push_back(strs[i]);
                         t->setTupleClass(keys.size() - 1);
+                        objectsInClassesCount->push_back(1);
                     } else {
                         t->setTupleClass(classKeyIndex);
+                        objectsInClassesCount->at(classKeyIndex)++;
                     }
                     break;
                 case AttrInteger:
