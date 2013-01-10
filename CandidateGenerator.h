@@ -16,7 +16,7 @@ class CandidateGenerator {
 	private:
 		vector<Tuple*>& reducedTable;
 		vector<vector<Candidate*>*> candidates;
-		vector<Candidate> contrastPatterns;				//exists only in one class and not outside that class
+		vector<Candidate*> contrastPatterns;				//exists only in one class and not outside that class
 		vector<vector<int>> supportsOfCandidates;		//vector to store supports of candidates of length 1
 		const int numberOfClasses;
 		HashTree* hashTree;
@@ -57,7 +57,7 @@ class CandidateGenerator {
 				Candidate* candidate =  new Candidate(attributes, &supportsOfCandidates[i]);
 				cout << "Candidate " << candidateId << " is contast pattern: " << candidate->isContrastPattern() << endl;  
 				if(candidate->isContrastPattern()) {
-					contrastPatterns.push_back(*candidate);
+					contrastPatterns.push_back(candidate);
 				} else {
 					candidatesOfLengthOne->push_back(candidate);
 				}
@@ -73,6 +73,7 @@ class CandidateGenerator {
 		*/
 		vector<Candidate*>* generateCandidatesLengthKPlusOne(vector<Candidate*>* candidatesLenkthK) {
 			vector<Candidate*>* candidatesLengthKPlusOne =  new vector<Candidate*>();			//it can contain contrast patterns as well
+			vector<Candidate*>* candidatesLengthKPlusOneWithoutContrastPatterns =  new vector<Candidate*>();
 			for(int i = 0; i < candidatesLenkthK->size(); i++) {
 				for(int j = i + 1; j < candidatesLenkthK->size(); j++) {
 					if((*candidatesLenkthK)[i]->isJoinable((*candidatesLenkthK)[j])) {
@@ -88,8 +89,20 @@ class CandidateGenerator {
 			candidates.push_back(candidatesLengthKPlusOne);
 			hashTree = new HashTree(*candidatesLengthKPlusOne, candidates.size());
 			assignSupportsToCandidates(hashTree);
+			collectContrastPattern(candidatesLengthKPlusOne, candidatesLengthKPlusOneWithoutContrastPatterns);
 			delete hashTree;
-			return candidatesLengthKPlusOne;
+			delete candidatesLengthKPlusOne;
+			return candidatesLengthKPlusOneWithoutContrastPatterns;
+		}
+
+		void collectContrastPattern(vector<Candidate*>* candidatesLenkthKPlusOne, vector<Candidate*>* candidatesLenkthKPlusOneWithoutContrastPatterns) {
+			for(int i = 0; i < candidatesLenkthKPlusOne->size(); i++) {
+				if((*candidatesLenkthKPlusOne)[i]->isContrastPattern()) {
+					contrastPatterns.push_back((*candidatesLenkthKPlusOne)[i]);
+				} else {
+					candidatesLenkthKPlusOneWithoutContrastPatterns->push_back((*candidatesLenkthKPlusOne)[i]);
+				}
+			}
 		}
 
 		//does one scan of database and determine supports
