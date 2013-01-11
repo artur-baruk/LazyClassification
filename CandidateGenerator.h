@@ -43,7 +43,7 @@ class CandidateGenerator {
 				for(int j = 0; j < numberOfCandidates; j++) {
 					if((*reducedTable[i]->getAttributes())[j] > 0.0f) {
 						int tClass = reducedTable[i]->getTupleClass();
-						supportsOfCandidates[j][tClass-1]++;	//increment support of atribute in appropriate class
+						supportsOfCandidates[j][tClass]++;	//increment support of atribute in appropriate class
 					}
 				}
 			}
