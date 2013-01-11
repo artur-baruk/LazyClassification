@@ -13,7 +13,7 @@
 #include "CandidateGenerator.h"
 #include "ContrastPatternScorer.h"
 
-void candidateGeneratorTest(vector<Tuple*>& table_red);
+void candidateGeneratorTest(vector<Tuple*>& table_red, vector<int>& objectsInClassesCount);
 
 int main() {
 	std::cout << "JEPs classification" << endl;
@@ -63,23 +63,23 @@ int main() {
 	vector<float>* attrs = t2->getAttributes();
 
 	//wiekszosc atrybutow z LITERY T, index klasy T = 19
-
-	(*attrs)[0] = 2.0;
-	(*attrs)[1] = 8.0;
+	//I,5,12,3,7,2,10,5,5,4,13,3,9,2,8,4,10
+	(*attrs)[0] = 5.0;
+	(*attrs)[1] = 12.0;
 	(*attrs)[2] = 3.0;
-	(*attrs)[3] = 5.0;
-	(*attrs)[4] = 1.0;
-	(*attrs)[5] = 8.0;
-	(*attrs)[6] = 13.0;
-	(*attrs)[7] = 1.0;
-	(*attrs)[8] = 2.0;
-	(*attrs)[9] = 2.0;
-	(*attrs)[10] = 1.0;
-	(*attrs)[11] = 8.0;
-	(*attrs)[12] = 0.0;
+	(*attrs)[3] = 7.0;
+	(*attrs)[4] = 2.0;
+	(*attrs)[5] = 10.0;
+	(*attrs)[6] = 5.0;
+	(*attrs)[7] = 5.0;
+	(*attrs)[8] = 4.0;
+	(*attrs)[9] = 11.0;
+	(*attrs)[10] = 3.0;
+	(*attrs)[11] = 9.0;
+	(*attrs)[12] = 2.0;
 	(*attrs)[13] = 8.0;
-	(*attrs)[14] = 1.0;
-	(*attrs)[15] = 8.0;
+	(*attrs)[14] = 3.0;
+	(*attrs)[15] = 10.0;
 
 	getReducedTable(&table, t2);
 
@@ -87,7 +87,7 @@ int main() {
 
 	t.stop();
 
-	candidateGeneratorTest(table);
+	candidateGeneratorTest(table, objectsInClassesCount);
 
 	total.stop();
 
@@ -96,11 +96,15 @@ int main() {
 	return 0;
 }
 
-void candidateGeneratorTest(vector<Tuple*>& table_red) {
+void candidateGeneratorTest(vector<Tuple*>& table_red, vector<int>& objectsInClassesCount) {
 	CandidateGenerator candidateGenerator = CandidateGenerator(table_red, 26);
 	candidateGenerator.execute();
 
-	//ContrastPatternScorer scorer(candidateGenerator.getContrastPatterns(), tutaj vektor z licznoscia klas);
-	//cout << "Wybrana klasa to : " << scorer.chooseDecisionClass();
+	ContrastPatternScorer scorer(candidateGenerator.getContrastPatterns(), objectsInClassesCount);
+	cout << "Wybrana klasa to : " << scorer.chooseDecisionClass();
+
+	//for (int i = 0; i < objectsInClassesCount.size(); i++) {
+	//	cout << "klasa : " << i << " licznosc: " << objectsInClassesCount[i] << endl; 
+	//}
 }
 

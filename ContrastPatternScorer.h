@@ -17,6 +17,8 @@ class ContrastPatternScorer {
 
 		double calculateCompactScore(Candidate* candidate) {
 			int numberOfTuplesInClass = classCardinalityTable[getContrastPatternDecisonClass(candidate)];
+			double x = (double) getContrastPatternSupport(candidate);
+			double y = ((double) getContrastPatternSupport(candidate)) / ((double) numberOfTuplesInClass);
 			return ((double) getContrastPatternSupport(candidate)) / ((double) numberOfTuplesInClass);
 		}
 
@@ -42,18 +44,21 @@ class ContrastPatternScorer {
 		ContrastPatternScorer(vector<Candidate*>& tContrastPatterns, vector<int>& tClassCardinalityTable): contrastPatterns(tContrastPatterns),  classCardinalityTable(tClassCardinalityTable){ }
 
 		int chooseDecisionClass() {
-			Candidate* maxScoreCandidate;
-			double maxScore = 0;
+			Candidate* maxScoreCandidate = NULL;
+			double maxScore = 0.0;
+			int maxScoreIndex = 0;
 
 			for(int i = 0; i < contrastPatterns.size(); i++) {
-				int currentCompactScore;
-				if((currentCompactScore = calculateCompactScore(contrastPatterns[i])) > maxScore) {
+				double currentCompactScore = calculateCompactScore(contrastPatterns[i]);
+				if(currentCompactScore > maxScore) {
 					maxScore = currentCompactScore;
 					maxScoreCandidate = contrastPatterns[i];
+					maxScoreIndex = i;
 				}
 			}
 
 			if(maxScoreCandidate != NULL) {
+				cout << "Max score con pattern index: " << maxScoreIndex << endl;
 				return getContrastPatternDecisonClass(maxScoreCandidate);
 			} else {
 				return -1;	//ERROR, there are no contrast patterns
