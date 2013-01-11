@@ -74,12 +74,14 @@ class CandidateGenerator {
 		vector<Candidate*>* generateCandidatesLengthKPlusOne(vector<Candidate*>* candidatesLenkthK) {
 			vector<Candidate*>* candidatesLengthKPlusOne =  new vector<Candidate*>();			//it can contain contrast patterns as well
 			vector<Candidate*>* candidatesLengthKPlusOneWithoutContrastPatterns =  new vector<Candidate*>();
+			Timer t;
+			t.start("Generate candidates");
 			for(int i = 0; i < candidatesLenkthK->size(); i++) {
 				for(int j = i + 1; j < candidatesLenkthK->size(); j++) {
 					if((*candidatesLenkthK)[i]->isJoinable((*candidatesLenkthK)[j])) {
 						vector<int>* attributes =  new vector<int>();
 						joinCandidates(attributes, (*candidatesLenkthK)[i], (*candidatesLenkthK)[j]);
-						cout << "Joining " << i+1 << " with " << j+1 << endl;
+						//cout << "Joining " << i+1 << " with " << j+1 << endl;
 						vector<int>* supports = new vector<int>(numberOfClasses);
 						Candidate* candidate = new Candidate(attributes,supports);
 						candidatesLengthKPlusOne->push_back(candidate);				
@@ -87,10 +89,24 @@ class CandidateGenerator {
 				}
 			}
 			candidates.push_back(candidatesLengthKPlusOne);
+			t.stop();
+			t.start("Build hash tree");
 			hashTree = new HashTree(*candidatesLengthKPlusOne, candidates.size());
+			t.stop();
+			t.start("Subset and count support");
 			assignSupportsToCandidates(hashTree);
+			t.stop();
+			t.start("Collect Contrast Pattern");
 			collectContrastPattern(candidatesLengthKPlusOne, candidatesLengthKPlusOneWithoutContrastPatterns);
+			t.stop();
+			t.start("Delete tree");
 			delete hashTree;
+			t.stop();
+			cout << "Number of candidates = " << candidatesLengthKPlusOne->size() << endl;
+			cout << "Number of candidates without contrast patterns = " << candidatesLengthKPlusOneWithoutContrastPatterns->size() << endl;
+			//chyba o to chodziło prawda? zeby tu gdzie wczesniej robilismy candidates.push_back(candidatesLengthKPlusOne); 
+			//zapisac tylko niekontrastowych
+			candidates.at(candidates.size()-1)= candidatesLengthKPlusOneWithoutContrastPatterns; 
 			delete candidatesLengthKPlusOne;
 			return candidatesLengthKPlusOneWithoutContrastPatterns;
 		}
@@ -104,6 +120,7 @@ class CandidateGenerator {
 				}
 			}
 		}
+						
 
 		//does one scan of database and determine supports
 		void assignSupportsToCandidates(HashTree* hashTree) {
@@ -133,10 +150,15 @@ class CandidateGenerator {
 		}
 
 		void execute() {
+			Timer t;
+			t.start("Candidates of lenght 1 generation & support count");
 			findOneLengthCandidates();
+			t.stop();
 			if(candidates[0]->size() >= 2) {
 				int k = 1;		//initial length of candidates that will be incremented
 				while(1) {
+					cout << "########################" << endl;
+					cout << "Candidates of length [" << k +1  << "]" << endl;
 					if(generateCandidatesLengthKPlusOne(candidates[k-1])->size() <= 1) {
 						break;	//the process of generating patterns has finished
 					}
