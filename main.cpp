@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <vector>
 #include <map>
+#include "Timer.h"
 #include "Combination.h"
 #include "Candidate.h"
 #include "HashTreeNode.h"
@@ -14,7 +15,7 @@
 void candidateGeneratorTest(vector<Tuple*>& table_red);
 
 int main() {
-	std::cout << "JEPs classification";
+	std::cout << "JEPs classification" << endl;
 
 	/*
 	 * 1. Read file with data and load data into decision table.
@@ -22,39 +23,14 @@ int main() {
 	 * 3. Find contrast patterns and calculate support.
 	 */
 
-	/*<testy drzewa>*/
-
-	vector<Candidate*> candidates;
-
-	vector<int>* attr1 = new vector<int>();
-	attr1->push_back(1);
-	attr1->push_back(2);
-
-	vector<int>* attr2 = new vector<int>();
-	attr2->push_back(4);
-	attr2->push_back(3);
-
-	vector<int>* attr3 = new vector<int>();
-	attr3->push_back(2);
-	attr3->push_back(5);
-
-	vector<int>* sup1 = new vector<int>();
-	sup1->push_back(0);
-	sup1->push_back(0);
-
-	candidates.push_back(new Candidate(attr1, sup1 ));
-	candidates.push_back(new Candidate(attr2, sup1 ));
-	candidates.push_back(new Candidate(attr3, sup1 ));
-
-	HashTree* ht = new HashTree(candidates,2);
-
-	ht->printHashTree();
-
-	/*</testy drzewa>*/
-
-	getchar();
+	Timer total;
+	total.start("Total time");
+	
+	Timer t;
+	t.start("File read time");
 
 	vector<Tuple*> table;
+
 	vector<int> objectsInClassesCount;
 
 	vector<Type> types;
@@ -63,42 +39,56 @@ int main() {
     types.push_back(AttrInteger);
     types.push_back(AttrInteger);
     types.push_back(AttrInteger);
+	types.push_back(AttrInteger);
+    types.push_back(AttrInteger);
+    types.push_back(AttrInteger);
+    types.push_back(AttrInteger);
+	types.push_back(AttrInteger);
+    types.push_back(AttrInteger);
+    types.push_back(AttrInteger);
+    types.push_back(AttrInteger);
+	types.push_back(AttrInteger);
+    types.push_back(AttrInteger);
+    types.push_back(AttrInteger);
+    types.push_back(AttrInteger);
 
-	readTuples("input2.txt", types, table, &objectsInClassesCount);
+	readTuples("letter.txt", types, table, &objectsInClassesCount);
 
-    cout << "Dataset read:" << endl;
-	for(int i = 0; i < table.size(); ++i) {
-	    Tuple* t = table[i];
-        std::cout << "Tuple class: " << t->getTupleClass() << ", attributes: ";
-	    for(int j = 0; j < (*t->getAttributes()).size(); ++j) {
-            cout << t->getAttribute(j) << ", ";
+	t.stop();
 
-        }
-	    cout << endl;
-	}
-
-	Tuple* t2 = new Tuple(4, 1);
+	t.start("Reduced table creation");
+	
+	Tuple* t2 = new Tuple(16, -1);
 	vector<float>* attrs = t2->getAttributes();
-	(*attrs)[0] = 1.0;
-	(*attrs)[1] = 2.0;
-	(*attrs)[2] = 2.0;
-	(*attrs)[3] = 1.0;
+
+	//wiekszosc atrybutow z LITERY T, index klasy T = 19
+
+	(*attrs)[0] = 2.0;
+	(*attrs)[1] = 8.0;
+	(*attrs)[2] = 3.0;
+	(*attrs)[3] = 5.0;
+	(*attrs)[4] = 1.0;
+	(*attrs)[5] = 8.0;
+	(*attrs)[6] = 13.0;
+	(*attrs)[7] = 1.0;
+	(*attrs)[8] = 2.0;
+	(*attrs)[9] = 2.0;
+	(*attrs)[10] = 1.0;
+	(*attrs)[11] = 8.0;
+	(*attrs)[12] = 0.0;
+	(*attrs)[13] = 8.0;
+	(*attrs)[14] = 1.0;
+	(*attrs)[15] = 8.0;
 
 	getReducedTable(&table, t2);
 
+	cout << "Reduced table size:" <<  table.size() << endl;
 
-	cout << "Reduced table:" << endl;
-	for(int i = 0; i < table.size(); ++i) {
-	    Tuple* t = table[i];
-        std::cout << "Tuple class: " << t->getTupleClass() << ", attributes: ";
-	    for(int j = 0; j < (*t->getAttributes()).size(); ++j) {
-            cout << t->getAttribute(j) << ", ";
-
-        }
-	    cout << endl;
-	}
+	t.stop();
 
 	candidateGeneratorTest(table);
+
+	total.stop();
 
 	int input;
 	std::cin >> input;
@@ -106,8 +96,8 @@ int main() {
 }
 
 void candidateGeneratorTest(vector<Tuple*>& table_red) {
-	CandidateGenerator candidateGenerator = CandidateGenerator(table_red, 3);
+	CandidateGenerator candidateGenerator = CandidateGenerator(table_red, 26);
 	candidateGenerator.execute();
-	candidateGenerator.printSupportsOfCandiadtesLengthOne();
+	//candidateGenerator.printSupportsOfCandiadtesLengthOne();
 }
 
