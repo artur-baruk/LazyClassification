@@ -11,6 +11,7 @@
 #include "LazyClassificator.h"
 #include "TupleCreator.h"
 #include "CandidateGenerator.h"
+#include "ContrastPatternScorer.h"
 
 void candidateGeneratorTest(vector<Tuple*>& table_red);
 
@@ -98,6 +99,8 @@ int main() {
 void candidateGeneratorTest(vector<Tuple*>& table_red) {
 	CandidateGenerator candidateGenerator = CandidateGenerator(table_red, 26);
 	candidateGenerator.execute();
-	//candidateGenerator.printSupportsOfCandiadtesLengthOne();
+
+	//ContrastPatternScorer scorer(candidateGenerator.getContrastPatterns(), tutaj vektor z licznoscia klas);
+	//cout << "Wybrana klasa to : " << scorer.chooseDecisionClass();
 }
 
