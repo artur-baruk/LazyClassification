@@ -3,12 +3,9 @@
 
 #include <vector>
 #include <iostream>
-#include "Tuple.h"
 #include "Candidate.h"
-#include "HashTree.h"
 
 using namespace std;
-
 
 class ContrastPatternScorer {
 	private:
@@ -58,7 +55,6 @@ class ContrastPatternScorer {
 			} else {
 				return -1;	//ERROR, there are no contrast patterns
 			}
-
 		}
 		
 };
