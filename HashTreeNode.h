@@ -86,7 +86,7 @@ class HashTreeNode {
 			{
 				if(candidates[i]->attributesEquals(p_subset)) //jezeli kandydat == podzbior
 				{
-					candidates[i]->incrementSupport(tClass-1);
+					candidates[i]->incrementSupport(tClass);
 				}
 			}
 		}
