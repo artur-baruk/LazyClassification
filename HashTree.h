@@ -11,7 +11,7 @@ class HashTree {
 		HashTreeNode* root;
 		int hash_arg;
 		int maxLevel;
- 
+
 	public:
 		HashTree(vector<Candidate*> p_candidates, int k) //k to dlugosc wstawianych kandydatow
 		{
@@ -22,7 +22,7 @@ class HashTree {
 
 			for ( int i = 0; i < p_candidates.size(); i++ ) {
 				insertCandidate(p_candidates[i]);
-			}	
+			}
 		}
 
 		~HashTree()
@@ -36,11 +36,11 @@ class HashTree {
 		{
 			HashTreeNode* current_node = root;
 			int hash;
-			vector<int> attributes;
-			for(int i=0; i<maxLevel; i++) 
+			vector<int>* attributes;
+			for(int i=0; i<maxLevel; i++)
 			{
 				attributes = p_candidate->getAttributes();
-				hash = (int)attributes[i] % hash_arg;
+				hash = (int)attributes->at(i) % hash_arg;
 				current_node = current_node->getChild(hash,true);
 			}
 			current_node->insertCandidate(p_candidate);
@@ -52,7 +52,7 @@ class HashTree {
 			HashTreeNode* current_node = root;
 			root->print();
 		}
-		
+
 		int getMaxLevel() {
 			return maxLevel;
 		}
@@ -63,11 +63,11 @@ class HashTree {
 		{
 			HashTreeNode* current_node = root;
 			int hash;
-			for(int i=0; i<maxLevel; i++) 
+			for(int i=0; i<maxLevel; i++)
 			{
 				hash = p_subset->at(i) % hash_arg;
 				current_node = current_node->getChild(hash,false);
-				if(current_node == 0) { 
+				if(current_node == 0) {
 					return;
 				}
 			}
@@ -76,5 +76,5 @@ class HashTree {
 		}
 
 };
- 
+
 #endif

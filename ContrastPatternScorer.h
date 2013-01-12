@@ -20,17 +20,17 @@ class ContrastPatternScorer {
 		}
 
 		int getContrastPatternSupport(Candidate* candidate) {
-			for(int i = 0; i < candidate->getSupports().size(); i++) {
-				if(candidate->getSupports()[i] != 0) {
-					return candidate->getSupports()[i];
+			for(int i = 0; i < candidate->getSupports()->size(); i++) {
+				if(candidate->getSupports()->at(i) != 0) {
+					return candidate->getSupports()->at(i);
 				}
 			}
 			return -1;		//candidate is not a contrast pattern
 		}
 
 		int getContrastPatternDecisonClass(Candidate* candidate) {
-			for(int i = 0; i < candidate->getSupports().size(); i++) {
-				if(candidate->getSupports()[i] != 0) {
+			for(int i = 0; i < candidate->getSupports()->size(); i++) {
+				if(candidate->getSupports()->at(i) != 0) {
 					return i;
 				}
 			}
@@ -61,7 +61,7 @@ class ContrastPatternScorer {
 				return -1;	//ERROR, there are no contrast patterns
 			}
 		}
-		
+
 };
- 
+
 #endif

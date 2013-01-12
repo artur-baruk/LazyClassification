@@ -12,8 +12,8 @@ class HashTreeNode {
 		int level; //roots level = 0
 		map<int,HashTreeNode*> children;
 		vector<Candidate*> candidates;
-		
- 
+
+
 	public:
 
 		HashTreeNode(int p_level) {
@@ -30,19 +30,19 @@ class HashTreeNode {
 		};
 
 		//zwraca wskaznik na potomka o odpowiednim haszu. W przypadku kiedy taki potomek nie istnieje to go tworzy.
-		HashTreeNode* getChild(int hash, bool insertEnabled) 
+		HashTreeNode* getChild(int hash, bool insertEnabled)
 		{
 			map<int,HashTreeNode*>::iterator it;
 			pair<map<int,HashTreeNode*>::iterator,bool> ret;
 			it = children.find(hash);
-			if (it == children.end()) 
+			if (it == children.end())
 			{
 				if (insertEnabled) {
 					ret =	children.insert(pair<int,HashTreeNode*>(hash,new HashTreeNode(level+1)));
 					it = ret.first;
 				}
-				else { 
-					return 0; 
+				else {
+					return 0;
 				}
 			}
 			return it->second;
@@ -58,7 +58,7 @@ class HashTreeNode {
 		//do testow rekurencyjne drukowanie wezlow
 		void print()
 		{
-			vector<int> attributes;
+			vector<int>* attributes;
 			cout << endl << "level: " << level << endl;
 			cout << "num of children: " << children.size() << " " << endl;
 			cout << "candidates:" << endl;
@@ -66,9 +66,9 @@ class HashTreeNode {
 			{
 				cout << "candidate " << i << ": [";
 				attributes = candidates[i]->getAttributes();
-				for(int j=0; j<attributes.size();j++)
+				for(int j=0; j<attributes->size();j++)
 				{
-					cout << attributes[j];
+					cout << attributes->at(j);
 				}
 				cout << "]";
 			}
@@ -77,12 +77,12 @@ class HashTreeNode {
 			{
 				it->second->print();
 			}
-			
+
 		}
-		
-		void countCandidatesSupport(vector<int>* p_subset, int tClass) 
+
+		void countCandidatesSupport(vector<int>* p_subset, int tClass)
 		{
-			for(int i=0; i<candidates.size();i++) 
+			for(int i=0; i<candidates.size();i++)
 			{
 				if(candidates[i]->attributesEquals(p_subset)) //jezeli kandydat == podzbior
 				{
@@ -92,5 +92,5 @@ class HashTreeNode {
 		}
 
 };
- 
+
 #endif

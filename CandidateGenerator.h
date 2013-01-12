@@ -17,18 +17,19 @@ class CandidateGenerator {
 		vector<Tuple*>& reducedTable;
 		vector<vector<Candidate*>*> candidates;
 		vector<Candidate*> contrastPatterns;				//exists only in one class and not outside that class
-		vector<vector<int>> supportsOfCandidates;		//vector to store supports of candidates of length 1
+		vector<vector<int> > supportsOfCandidates;		//vector to store supports of candidates of length 1
 		const int numberOfClasses;
 		HashTree* hashTree;
 
 		void findOneLengthCandidates() {
 			if(reducedTable.size() == 0) {
 				cout << "Empty reduced table";
-				exit(0);
+				//exit(0);
+				return;
 			}
 
-			const int numberOfCandidates = reducedTable[0]->getAttributes()->size(); 
-			
+			const int numberOfCandidates = reducedTable[0]->getAttributes()->size();
+
 			//initializes support matrix (candidate x class)
 			for(int i = 0; i < numberOfCandidates; i++) {
 				vector<int> internalSupports;
@@ -55,7 +56,7 @@ class CandidateGenerator {
 				vector<int>* attributes = new vector<int>();
 				attributes->push_back(candidateId);
 				Candidate* candidate =  new Candidate(attributes, &supportsOfCandidates[i]);
-				cout << "Candidate " << candidateId << " is contast pattern: " << candidate->isContrastPattern() << endl;  
+				cout << "Candidate " << candidateId << " is contast pattern: " << candidate->isContrastPattern() << endl;
 				if(candidate->isContrastPattern()) {
 					contrastPatterns.push_back(candidate);
 				} else {
@@ -84,7 +85,7 @@ class CandidateGenerator {
 						//cout << "Joining " << i+1 << " with " << j+1 << endl;
 						vector<int>* supports = new vector<int>(numberOfClasses);
 						Candidate* candidate = new Candidate(attributes,supports);
-						candidatesLengthKPlusOne->push_back(candidate);				
+						candidatesLengthKPlusOne->push_back(candidate);
 					}
 				}
 			}
@@ -104,9 +105,9 @@ class CandidateGenerator {
 			t.stop();
 			cout << "Number of candidates = " << candidatesLengthKPlusOne->size() << endl;
 			cout << "Number of candidates without contrast patterns = " << candidatesLengthKPlusOneWithoutContrastPatterns->size() << endl;
-			//chyba o to chodziło prawda? zeby tu gdzie wczesniej robilismy candidates.push_back(candidatesLengthKPlusOne); 
+			//chyba o to chodziło prawda? zeby tu gdzie wczesniej robilismy candidates.push_back(candidatesLengthKPlusOne);
 			//zapisac tylko niekontrastowych
-			candidates.at(candidates.size()-1)= candidatesLengthKPlusOneWithoutContrastPatterns; 
+			candidates.at(candidates.size()-1)= candidatesLengthKPlusOneWithoutContrastPatterns;
 			delete candidatesLengthKPlusOne;
 			return candidatesLengthKPlusOneWithoutContrastPatterns;
 		}
@@ -120,7 +121,7 @@ class CandidateGenerator {
 				}
 			}
 		}
-						
+
 
 		//does one scan of database and determine supports
 		void assignSupportsToCandidates(HashTree* hashTree) {
@@ -130,10 +131,10 @@ class CandidateGenerator {
 		}
 
 		void joinCandidates(vector<int>* attributes, Candidate* first, Candidate* second) {
-			for(int i = 0; i < first->getAttributes().size(); i++) {
-				attributes->push_back(first->getAttributes()[i]);
+			for(int i = 0; i < first->getAttributes()->size(); i++) {
+				attributes->push_back(first->getAttributes()->at(i));
 			}
-			attributes->push_back(second->getAttributes().back());
+			attributes->push_back(second->getAttributes()->back());
 		}
 
 	public:
@@ -141,7 +142,7 @@ class CandidateGenerator {
 
 		void printSupportsOfCandiadtesLengthOne() {
 			for(int i = 0; i < supportsOfCandidates.size(); i++) {
-				cout << "Candidate " << i + 1 << " supports: "; 
+				cout << "Candidate " << i + 1 << " supports: ";
 				for (int j = 0; j < supportsOfCandidates[i].size(); j++) {
 					cout << supportsOfCandidates[i][j] << " ";
 				}
@@ -170,7 +171,7 @@ class CandidateGenerator {
 		vector<vector<Candidate*>*>& getCandidates() { return candidates; }
 
 		vector<Candidate*>& getContrastPatterns() { return contrastPatterns; }
-		
+
 };
- 
+
 #endif
