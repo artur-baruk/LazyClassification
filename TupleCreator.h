@@ -40,6 +40,7 @@ int readTuples(const std::string& fileName, const std::vector<Type>& types, std:
 	inputFile.open(fileName.c_str());
 
     std::vector<std::string> keys;
+    std::vector<std::vector<std::string> > attrsKeys(types.size());
 
     while(!inputFile.eof())
     {
@@ -48,19 +49,19 @@ int readTuples(const std::string& fileName, const std::vector<Type>& types, std:
         split(temp, ',', strs);
         Tuple* t = new Tuple(strs.size() - 1);
         int attrCount = 0;
-        int classKeyIndex;
+        int keyIndex;
         for (int i = 0; i < strs.size(); ++i) {
             switch(types[i])
             {
                 case AttrClass:
-                    classKeyIndex = getKeyIndex(&keys, strs[i]);
-                    if(classKeyIndex == -1) {
+                    keyIndex = getKeyIndex(&keys, strs[i]);
+                    if(keyIndex == -1) {
                         keys.push_back(strs[i]);
                         t->setTupleClass(keys.size() - 1);
                         objectsInClassesCount->push_back(1);
                     } else {
-                        t->setTupleClass(classKeyIndex);
-                        objectsInClassesCount->at(classKeyIndex)++;
+                        t->setTupleClass(keyIndex);
+                        objectsInClassesCount->at(keyIndex)++;
                     }
                     break;
                 case AttrInteger:
@@ -70,8 +71,13 @@ int readTuples(const std::string& fileName, const std::vector<Type>& types, std:
                     t->setAttribute(attrCount++, strToFloat(strs[i]));
                     break;
                 case AttrCategorical:
-                    //TODO hashmapa itp
-                    //tak jak w klasach tylko dla kazdego atrubutu inna mapa
+                    keyIndex = getKeyIndex(&attrsKeys[i], strs[i]);
+                    if(keyIndex == -1) {
+                        attrsKeys[i].push_back(strs[i]);
+                        t->setAttribute(attrCount++, attrsKeys[i].size() - 1);
+                    } else {
+                        t->setAttribute(attrCount++, keyIndex);
+                    }
                     break;
             }
         }

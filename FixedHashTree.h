@@ -63,7 +63,6 @@ class HashTreeNode {
 				if(candidates[i]->isSubset(p_attrDense)) //jezeli kandydat == podzbior
 				{
 					candidates[i]->incrementSupport(tClass);
-					return;
 				}
 			}
 			map<int,HashTreeNode*>::iterator it;
