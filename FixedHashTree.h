@@ -10,14 +10,14 @@ class HashTreeNode {
     private:
         int level; //roots level = 0
         int hash_arg;
+        int candidateLenght;
 
         map<int,HashTreeNode*> children;
         vector<Candidate*> candidates;
 
 	public:
-        HashTreeNode(int hash_arg, int level) : hash_arg(hash_arg), level(level) {
+        HashTreeNode(int hash_arg, int candidateLenght, int level = 0) : hash_arg(hash_arg), candidateLenght(candidateLenght), level(level) {
             candidates.reserve(2);
-
         }
 
         ~HashTreeNode() //jakos tak bym rozjebal potomkow, dla candidates tylko czyscimy wektor
@@ -32,7 +32,7 @@ class HashTreeNode {
 		//wrzuca wsk na kandydata do wektora
 		void insertCandidate(Candidate* p_candidate)
 		{
-		    if(children.empty() && candidates.size() < 2) {
+		    if(children.empty() && candidates.size() < 2 || p_candidate->getAttributes()->size() >= level) {
                 candidates.push_back(p_candidate);
 		    }
             else {
@@ -41,7 +41,7 @@ class HashTreeNode {
                     int hash = candidates[i]->getAttributes()->at(level) % hash_arg;
                     it = children.find(hash);
                     if(it == children.end()) {
-                        children.insert(pair<int,HashTreeNode*>(hash, new HashTreeNode(hash_arg, level+1)));
+                        children.insert(pair<int,HashTreeNode*>(hash, new HashTreeNode(hash_arg, candidateLenght, level+1)));
                     }
                     children[hash]->insertCandidate(candidates[i]);
 
@@ -54,6 +54,30 @@ class HashTreeNode {
                 children[hash]->insertCandidate(p_candidate);
                 candidates.clear();
             }
+		}
+
+		void countSupport(vector<int>* p_subset, int tClass, int currentPosition = 0)
+		{
+			for(int i = 0; i < candidates.size(); ++i)
+			{
+				if(candidates[i]->attributesEquals(p_subset)) //jezeli kandydat == podzbior
+				{
+					candidates[i]->incrementSupport(tClass);
+					return;
+				}
+			}
+			map<int,HashTreeNode*>::iterator it;
+			//hashujemy od aktualnej pozycji do konca bez ostatnich (k - level - 1) pozycji
+			int maxPosition = p_subset->size() - (candidateLenght - level - 1);
+			if(maxPosition > p_subset->size())
+                maxPosition = p_subset->size();
+			for(int i = currentPosition; i < maxPosition; ++i) {
+                it = children.find(p_subset->at(i) % hash_arg);
+                if(it != children.end()) {
+                    it->second->countSupport(p_subset, tClass, i + 1);
+                }
+			}
+
 		}
 
 		void print() {
@@ -86,9 +110,9 @@ class HashTree {
 			maxLevel = k; // wysokosc drzewa
 			hash_arg = k+1; // bedziemy haszowac hash = argument MOD hash_arg
 
-			root = new HashTreeNode(hash_arg, 0);
+			root = new HashTreeNode(hash_arg, k);
 
-			for ( int i = 0; i < p_candidates->size(); i++ ) {
+			for( int i = 0; i < p_candidates->size(); i++ ) {
 				root->insertCandidate(p_candidates->at(i));
 			}
 		}
@@ -101,6 +125,11 @@ class HashTree {
 
 		int getMaxLevel() {
 			return maxLevel;
+		}
+
+		void countSupport(vector<int>* p_subset, int tClass)
+		{
+			root->countSupport(p_subset,tClass);
 		}
 
 };

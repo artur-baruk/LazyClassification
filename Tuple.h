@@ -1,6 +1,8 @@
 #ifndef TUPLE_H
 #define TUPLE_H
 
+#include "FixedHashTree.h"
+
 /**
  * Wrapper normalizing string data into transactinal (numbers instead of words).
  * Value 0.0 in a vector with attributes means not specified (null).
@@ -40,8 +42,8 @@ class Tuple {
 
 		float getAttribute(int index) { return (*attributes)[index]; }
 
-		
-			
+
+
 		// generowanie podzbiorow k-elementowych z transakcji
 		std::vector<std::vector<int>*>* getSubSets(int k)
 		{
@@ -51,25 +53,25 @@ class Tuple {
 
 			for(int i=0; i<attributes->size(); i++)
 			{
-				if(attributes->at(i) !=  -1) 
+				if(attributes->at(i) !=  -1)
 				{
 					attributes_dense->push_back(i);
 				}
 			}
-			
+
 			int num_of_attributes = attributes_dense->size(); //ile elementow ma transakcja
 			int subset_size = k;
 
 			if (num_of_attributes < subset_size)
 				return subsets;
-			
+
 			Combination* c = new Combination(num_of_attributes,subset_size);
 			int num_of_subsets = c->Choose(num_of_attributes,subset_size);
 
 			for (int i = 0 ; i < num_of_subsets; ++i)
 			{
 				subset = new std::vector<int>();
-				for(int j = 0; j<subset_size; j++) 
+				for(int j = 0; j<subset_size; j++)
 				{
 					subset->push_back(attributes_dense->at(c->data[j]));
 				}
@@ -82,11 +84,11 @@ class Tuple {
 		//bierze jedna transakcje, rozbija na podzbiory i jedzie każdym podzbiorem po drzewie az do liscia.
 		//w lisciu sprawdza czy jest kandydat rowny temu podzbiorowi. Jezeli jest to podbija wsparcie kandydata o 1
 		//przed uzyciem tej funkcji trzeba zbudowac drzewo k-elementowych kandydatow. HashTree* ht = new HashTree(candidates,k);
-		void subset_and_count(HashTree* tree) 
+		void subset_and_count(FixedHashTree::HashTree* tree)
 		{
 			int k = tree->getMaxLevel();
 			std::vector<std::vector<int>*>* subsets = getSubSets(k);
-			for(int i=0; i<subsets->size();i++) 
+			for(int i=0; i<subsets->size();i++)
 			{
 				tree->countSupport(subsets->at(i),tupleClass);
 			}

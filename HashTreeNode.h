@@ -8,13 +8,13 @@ using namespace std;
  */
 
 class HashTreeNode {
-  private:
+
+    private:
 		int level; //roots level = 0
 		map<int,HashTreeNode*> children;
 		vector<Candidate*> candidates;
 
-
-	public:
+    public:
 
 		HashTreeNode(int p_level) {
 			level = p_level;

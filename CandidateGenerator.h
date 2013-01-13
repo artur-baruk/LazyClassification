@@ -5,7 +5,7 @@
 #include <iostream>
 #include "Tuple.h"
 #include "Candidate.h"
-#include "HashTree.h"
+#include "FixedHashTree.h"
 
 using namespace std;
 
@@ -19,7 +19,7 @@ class CandidateGenerator {
 		vector<Candidate*> contrastPatterns;				//exists only in one class and not outside that class
 		vector<vector<int> > supportsOfCandidates;		//vector to store supports of candidates of length 1
 		const int numberOfClasses;
-		HashTree* hashTree;
+		FixedHashTree::HashTree* hashTree;
 
 		void findOneLengthCandidates() {
 			if(reducedTable.size() == 0) {
@@ -92,7 +92,7 @@ class CandidateGenerator {
 			candidates.push_back(candidatesLengthKPlusOne);
 			t.stop();
 			t.start("Build hash tree");
-			hashTree = new HashTree(*candidatesLengthKPlusOne, candidates.size());
+			hashTree = new FixedHashTree::HashTree(candidatesLengthKPlusOne, candidates.size());
 			t.stop();
 			t.start("Subset and count support");
 			assignSupportsToCandidates(hashTree);
@@ -124,7 +124,7 @@ class CandidateGenerator {
 
 
 		//does one scan of database and determine supports
-		void assignSupportsToCandidates(HashTree* hashTree) {
+		void assignSupportsToCandidates(FixedHashTree::HashTree* hashTree) {
 			for(unsigned long i = 0; i < reducedTable.size(); i++) {
 				reducedTable[i]->subset_and_count(hashTree);
 			}
