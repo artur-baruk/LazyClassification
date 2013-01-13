@@ -81,17 +81,35 @@ class Tuple {
 			return subsets;
 		}
 
+		// generowanie podzbiorow k-elementowych z transakcji
+		std::vector<int>* getAttrDense()
+		{
+			std::vector<int>* attributes_dense = new std::vector<int>();
+
+			for(int i=0; i<attributes->size(); i++)
+			{
+				if(attributes->at(i) !=  -1)
+				{
+					attributes_dense->push_back(i);
+				}
+			}
+			return attributes_dense;
+		}
+
 		//bierze jedna transakcje, rozbija na podzbiory i jedzie każdym podzbiorem po drzewie az do liscia.
 		//w lisciu sprawdza czy jest kandydat rowny temu podzbiorowi. Jezeli jest to podbija wsparcie kandydata o 1
 		//przed uzyciem tej funkcji trzeba zbudowac drzewo k-elementowych kandydatow. HashTree* ht = new HashTree(candidates,k);
 		void subset_and_count(FixedHashTree::HashTree* tree)
 		{
-			int k = tree->getMaxLevel();
+			/*int k = tree->getMaxLevel();
 			std::vector<std::vector<int>*>* subsets = getSubSets(k);
 			for(int i=0; i<subsets->size();i++)
 			{
 				tree->countSupport(subsets->at(i),tupleClass);
-			}
+			}*/
+			std::vector<int>* attrDense = getAttrDense();
+            tree->countSupport(attrDense, tupleClass);
+            delete(attrDense);
 		}
 
 };

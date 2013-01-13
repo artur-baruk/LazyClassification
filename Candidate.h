@@ -1,6 +1,8 @@
 #ifndef CANDIDATE_H
 #define CANDIDATE_H
 
+#include <algorithm>
+
 using namespace std;
 
 /*
@@ -37,7 +39,19 @@ class Candidate {
 				}
 			}
 			return true;
+		}
 
+		//porownanie atrybutow kandydata z podzbiorem atrybutow transakcji
+		bool isSubset(vector<int>* p_attributes)
+		{
+		    vector<int>::iterator it = p_attributes->begin();
+		    for(int i = 0; i < attributes->size(); ++i)
+			{
+			    if(std::find(it, p_attributes->end(), attributes->at(i)) == p_attributes->end()) {
+                    return false;
+			    }
+			}
+			return true;
 		}
 
 		/*

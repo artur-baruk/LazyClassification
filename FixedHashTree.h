@@ -56,11 +56,11 @@ class HashTreeNode {
             }
 		}
 
-		void countSupport(vector<int>* p_subset, int tClass, int currentPosition = 0)
+		void countSupport(vector<int>* p_attrDense, int tClass, int currentPosition = 0)
 		{
 			for(int i = 0; i < candidates.size(); ++i)
 			{
-				if(candidates[i]->attributesEquals(p_subset)) //jezeli kandydat == podzbior
+				if(candidates[i]->isSubset(p_attrDense)) //jezeli kandydat == podzbior
 				{
 					candidates[i]->incrementSupport(tClass);
 					return;
@@ -68,13 +68,13 @@ class HashTreeNode {
 			}
 			map<int,HashTreeNode*>::iterator it;
 			//hashujemy od aktualnej pozycji do konca bez ostatnich (k - level - 1) pozycji
-			int maxPosition = p_subset->size() - (candidateLenght - level - 1);
-			if(maxPosition > p_subset->size())
-                maxPosition = p_subset->size();
+			int maxPosition = p_attrDense->size() - (candidateLenght - level - 1);
+			if(maxPosition > p_attrDense->size())
+                maxPosition = p_attrDense->size();
 			for(int i = currentPosition; i < maxPosition; ++i) {
-                it = children.find(p_subset->at(i) % hash_arg);
+                it = children.find(p_attrDense->at(i) % hash_arg);
                 if(it != children.end()) {
-                    it->second->countSupport(p_subset, tClass, i + 1);
+                    it->second->countSupport(p_attrDense, tClass, i + 1);
                 }
 			}
 

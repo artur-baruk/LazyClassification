@@ -5,8 +5,6 @@
 #include "Timer.h"
 #include "Combination.h"
 #include "Candidate.h"
-#include "HashTreeNode.h"
-#include "HashTree.h"
 #include "Tuple.h"
 #include "LazyClassificator.h"
 #include "TupleCreator.h"
@@ -26,7 +24,7 @@ int main() {
 
 	Timer total;
 	total.start("Total time");
-	
+
 	Timer t;
 	t.start("File read time");
 
@@ -58,7 +56,7 @@ int main() {
 	t.stop();
 
 	t.start("Reduced table creation");
-	
+
 	Tuple* t2 = new Tuple(16, -1);
 	vector<float>* attrs = t2->getAttributes();
 
@@ -104,7 +102,7 @@ void candidateGeneratorTest(vector<Tuple*>& table_red, vector<int>& objectsInCla
 	cout << "Wybrana klasa to : " << scorer.chooseDecisionClass();
 
 	//for (int i = 0; i < objectsInClassesCount.size(); i++) {
-	//	cout << "klasa : " << i << " licznosc: " << objectsInClassesCount[i] << endl; 
+	//	cout << "klasa : " << i << " licznosc: " << objectsInClassesCount[i] << endl;
 	//}
 }
 
