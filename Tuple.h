@@ -116,7 +116,6 @@ class Tuple {
 
 		void flagTuples(FixedHashTree::HashTree* tree) {
 			std::vector<int>* attrDense = getAttrDense();
-			tree->
 			delete(attrDense);
 		}
 
