@@ -12,6 +12,7 @@ class Tuple {
 	private:
 		std::vector<float>* attributes;		//nominal attributes like Temperature{Low=1.0, Mild=2.0, High=3.0}
 		int tupleClass;					//number of a class
+		bool cpFlag;					//if true this transaction is supported by at least one contrast pattern
 
 	public:
 
@@ -23,6 +24,7 @@ class Tuple {
 		    for(int i = 0; i < attrsCount; ++i) {
 		        (*attributes)[i] = -1;
 		    }
+			cpFlag = false;
 		}
 
 		~Tuple() {
@@ -110,6 +112,16 @@ class Tuple {
 			std::vector<int>* attrDense = getAttrDense();
             tree->countSupport(attrDense, tupleClass);
             delete(attrDense);
+		}
+
+		void flagTuples(FixedHashTree::HashTree* tree) {
+			std::vector<int>* attrDense = getAttrDense();
+			tree->
+			delete(attrDense);
+		}
+
+		void setCPFlag() {
+			cpFlag = true;
 		}
 
 };
