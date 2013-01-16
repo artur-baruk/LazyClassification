@@ -2,6 +2,7 @@
 #define FIXEDHASHTREE_H_INCLUDED
 
 #include "Candidate.h"
+#include "Tuple.h"
 
 namespace FixedHashTree {
 
@@ -16,7 +17,7 @@ class HashTreeNode {
         vector<Candidate*> candidates;
 
 	public:
-        HashTreeNode(int hash_arg, int candidateLenght, int level = 0) : hash_arg(hash_arg), candidateLenght(candidateLenght), level(level) {
+        HashTreeNode(int hash_arg, int candidateLenght = 0, int level = 0) : hash_arg(hash_arg), candidateLenght(candidateLenght), level(level) {
             candidates.reserve(2);
         }
 
@@ -79,6 +80,27 @@ class HashTreeNode {
 
 		}
 
+		void countCompactSupport(Tuple* tuple, vector<int>* p_attrDense, int tClass, int currentPosition = 0)
+		{
+			for(int i = 0; i < candidates.size(); ++i)
+			{
+				if(candidates[i]->isSubset(p_attrDense)) //jezeli kandydat == podzbior
+				{
+					//tuple->setCPFlag();
+					return;
+				}
+			}
+			map<int,HashTreeNode*>::iterator it;
+			//hashujemy po wszystkich pozycjach
+			for(int i = currentPosition; i < p_attrDense->size(); ++i) {
+                it = children.find(p_attrDense->at(i) % hash_arg);
+                if(it != children.end()) {
+                    it->second->countSupport(p_attrDense, tClass, i + 1);
+                }
+			}
+
+		}
+
 		void print() {
 		    for(map<int,HashTreeNode*>::iterator it = children.begin(); it != children.end(); ++it) {
                 it->second->print();
@@ -129,6 +151,11 @@ class HashTree {
 		void countSupport(vector<int>* p_subset, int tClass)
 		{
 			root->countSupport(p_subset,tClass);
+		}
+
+		void countCompactSupport(Tuple* tuple, vector<int>* p_subset, int tClass)
+		{
+			root->countCompactSupport(tuple, p_subset, tClass);
 		}
 
 };

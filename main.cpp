@@ -35,24 +35,17 @@ int main() {
 	vector<Type> types;
     types.push_back(AttrClass);
     types.push_back(AttrInteger);
-    types.push_back(AttrInteger);
-    types.push_back(AttrInteger);
-    types.push_back(AttrInteger);
-	types.push_back(AttrInteger);
-    types.push_back(AttrInteger);
-    types.push_back(AttrInteger);
-    types.push_back(AttrInteger);
-	types.push_back(AttrInteger);
-    types.push_back(AttrInteger);
-    types.push_back(AttrInteger);
-    types.push_back(AttrInteger);
-	types.push_back(AttrInteger);
-    types.push_back(AttrInteger);
+    types.push_back(AttrCategorical);
     types.push_back(AttrInteger);
     types.push_back(AttrInteger);
 
-	readTuples("letter.txt", types, table, &objectsInClassesCount);
+	readTuples("input2.txt", types, table, &objectsInClassesCount);
 
+	for(int i = 0; i < table.size(); ++i) {
+        cout<< "obj: " << i << " attr: " << table[i]->getAttributes()->at(1) << endl;
+	}
+
+    return 0;
 	t.stop();
 
 	t.start("Reduced table creation");
@@ -96,7 +89,7 @@ int main() {
 
 void candidateGeneratorTest(vector<Tuple*>& table_red, vector<int>& objectsInClassesCount) {
 	CandidateGenerator candidateGenerator = CandidateGenerator(table_red, 26);
-	candidateGenerator.execute();
+	candidateGenerator.execute(Michal1);
 
 	ContrastPatternScorer scorer(candidateGenerator.getContrastPatterns(), objectsInClassesCount);
 	cout << "Wybrana klasa to : " << scorer.chooseDecisionClass();

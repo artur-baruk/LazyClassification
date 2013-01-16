@@ -1,6 +1,7 @@
 #ifndef TUPLE_H
 #define TUPLE_H
 
+#include "HashTree.h"
 #include "FixedHashTree.h"
 
 /**
@@ -99,16 +100,27 @@ class Tuple {
 		//bierze jedna transakcje, rozbija na podzbiory i jedzie każdym podzbiorem po drzewie az do liscia.
 		//w lisciu sprawdza czy jest kandydat rowny temu podzbiorowi. Jezeli jest to podbija wsparcie kandydata o 1
 		//przed uzyciem tej funkcji trzeba zbudowac drzewo k-elementowych kandydatow. HashTree* ht = new HashTree(candidates,k);
-		void subset_and_count(FixedHashTree::HashTree* tree)
+		void subset_and_count(HashTree* tree)
 		{
-			/*int k = tree->getMaxLevel();
+			int k = tree->getMaxLevel();
 			std::vector<std::vector<int>*>* subsets = getSubSets(k);
 			for(int i=0; i<subsets->size();i++)
 			{
 				tree->countSupport(subsets->at(i),tupleClass);
-			}*/
+			}
+		}
+
+		void countSupportFromAttrDense(FixedHashTree::HashTree* tree)
+		{
 			std::vector<int>* attrDense = getAttrDense();
             tree->countSupport(attrDense, tupleClass);
+            delete(attrDense);
+		}
+
+		void countCompactSupportFromAttrDense(FixedHashTree::HashTree* tree)
+		{
+			std::vector<int>* attrDense = getAttrDense();
+            tree->countCompactSupport(this, attrDense, tupleClass);
             delete(attrDense);
 		}
 

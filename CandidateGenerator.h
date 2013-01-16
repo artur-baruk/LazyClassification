@@ -9,6 +9,13 @@
 
 using namespace std;
 
+enum Method
+{
+    Przemo,
+    Michal1,
+    Michal2
+};
+
 /*
  * Executes the porcess of candidates generation and collects contrast patterns;
  */
@@ -19,7 +26,8 @@ class CandidateGenerator {
 		vector<Candidate*> contrastPatterns;				//exists only in one class and not outside that class
 		vector<vector<int> > supportsOfCandidates;		//vector to store supports of candidates of length 1
 		const int numberOfClasses;
-		FixedHashTree::HashTree* hashTree;
+		HashTree* hashTree;
+		FixedHashTree::HashTree* fixedHashTree;
 
 		void findOneLengthCandidates() {
 			if(reducedTable.size() == 0) {
@@ -72,7 +80,7 @@ class CandidateGenerator {
 		* Generates candidates of length k+1 based on candidates of length k.
 		* Return true if there are at least two candidates generated (but not contast patterns).
 		*/
-		vector<Candidate*>* generateCandidatesLengthKPlusOne(vector<Candidate*>* candidatesLenkthK) {
+		vector<Candidate*>* generateCandidatesLengthKPlusOne(Method method, vector<Candidate*>* candidatesLenkthK) {
 			vector<Candidate*>* candidatesLengthKPlusOne =  new vector<Candidate*>();			//it can contain contrast patterns as well
 			vector<Candidate*>* candidatesLengthKPlusOneWithoutContrastPatterns =  new vector<Candidate*>();
 			Timer t;
@@ -92,16 +100,37 @@ class CandidateGenerator {
 			candidates.push_back(candidatesLengthKPlusOne);
 			t.stop();
 			t.start("Build hash tree");
-			hashTree = new FixedHashTree::HashTree(candidatesLengthKPlusOne, candidates.size());
+			switch(method) {
+                case Przemo:
+                    hashTree = new HashTree(candidatesLengthKPlusOne, candidates.size());
+                    break;
+                case Michal1: case Michal2:
+                fixedHashTree = new FixedHashTree::HashTree(candidatesLengthKPlusOne, candidates.size());
+                break;
+			}
 			t.stop();
 			t.start("Subset and count support");
-			assignSupportsToCandidates(hashTree);
+			switch(method) {
+                case Przemo:
+                    assignSupportsToCandidates(hashTree);
+                    break;
+                case Michal1:
+                    assignSupportsToCandidatesFromAttrDense(fixedHashTree);
+                    break;
+                case Michal2:
+                    assignCompactSupportsToCandidatesFromAttrDense(fixedHashTree);
+                    break;
+			}
+			assignSupportsToCandidates(fixedHashTree);
 			t.stop();
 			t.start("Collect Contrast Pattern");
 			collectContrastPattern(candidatesLengthKPlusOne, candidatesLengthKPlusOneWithoutContrastPatterns);
 			t.stop();
 			t.start("Delete tree");
-			delete hashTree;
+			if(fixedHashTree != NULL)
+                delete fixedHashTree;
+			if(hashTree != NULL)
+                delete hashTree;
 			t.stop();
 			cout << "Number of candidates = " << candidatesLengthKPlusOne->size() << endl;
 			cout << "Number of candidates without contrast patterns = " << candidatesLengthKPlusOneWithoutContrastPatterns->size() << endl;
@@ -124,9 +153,21 @@ class CandidateGenerator {
 
 
 		//does one scan of database and determine supports
-		void assignSupportsToCandidates(FixedHashTree::HashTree* hashTree) {
+		void assignSupportsToCandidates(HashTree* hashTree) {
 			for(unsigned long i = 0; i < reducedTable.size(); i++) {
 				reducedTable[i]->subset_and_count(hashTree);
+			}
+		}
+
+		void assignSupportsToCandidatesFromAttrDense(FixedHashTree::HashTree* hashTree) {
+			for(unsigned long i = 0; i < reducedTable.size(); i++) {
+				reducedTable[i]->countSupportFromAttrDense(hashTree);
+			}
+		}
+
+		void assignCompactSupportsToCandidatesFromAttrDense(FixedHashTree::HashTree* hashTree) {
+			for(unsigned long i = 0; i < reducedTable.size(); i++) {
+				reducedTable[i]->countCompactSupportFromAttrDense(hashTree);
 			}
 		}
 
@@ -150,7 +191,7 @@ class CandidateGenerator {
 			}
 		}
 
-		void execute() {
+		void execute(Method method) {
 			Timer t;
 			t.start("Candidates of lenght 1 generation & support count");
 			findOneLengthCandidates();
@@ -160,7 +201,7 @@ class CandidateGenerator {
 				while(1) {
 					cout << "########################" << endl;
 					cout << "Candidates of length [" << k +1  << "]" << endl;
-					if(generateCandidatesLengthKPlusOne(candidates[k-1])->size() <= 1) {
+					if(generateCandidatesLengthKPlusOne(method, candidates[k-1])->size() <= 1) {
 						break;	//the process of generating patterns has finished
 					}
 					k++;
