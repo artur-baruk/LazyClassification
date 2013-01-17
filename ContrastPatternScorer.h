@@ -5,6 +5,7 @@
 #include <iostream>
 #include "Candidate.h"
 #include "Tuple.h"
+#include "FixedHashTree.h"
 
 using namespace std;
 
@@ -26,13 +27,22 @@ class ContrastPatternScorer {
 			classCardinalityTable(tClassCardinalityTable), reducedTable(tReducedTable){ }
 
 		int chooseDecisionClass() {
-			//FixedHashTree::HashTree* hashTree = new FixedHashTree::HashTree(contrastPatterns);
+			FixedHashTree::HashTree* hashTree = new FixedHashTree::HashTree(contrastPatterns, 0);
+			assignCompactSupportsToCandidatesFromAttrDense(hashTree, &compactSupportOfClassesCounter);
 
-			//for(unsigned long i = 0; i < reducedTable.size(); i++) {
-			//	reducedTable[i]->subset_and_count(hashTree);
-			//}
-			return -1;
+			int indexOfClass = 0;
+			double maxCompactScore = 0.0;
+			double currentComapctScore = 0.0;
+			for(int i = 0; i < classCardinalityTable.size(); i++) {
+				currentComapctScore = compactSupportOfClassesCounter[i] / classCardinalityTable[i];
+				if(currentComapctScore > maxCompactScore) {
+					maxCompactScore = currentComapctScore;
+					indexOfClass = i;
+				}
+			}
+			return indexOfClass;
 		}
+
 
 };
 
