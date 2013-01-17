@@ -91,8 +91,11 @@ void candidateGeneratorTest(vector<Tuple*>& table_red, vector<int>& objectsInCla
 	CandidateGenerator candidateGenerator = CandidateGenerator(table_red, 26);
 	candidateGenerator.execute(Michal1);
 
-	ContrastPatternScorer scorer(candidateGenerator.getContrastPatterns(), objectsInClassesCount);
-	cout << "Wybrana klasa to : " << scorer.chooseDecisionClass();
+	int end;
+	std::cin >> end;
+
+	//ContrastPatternScorer scorer(candidateGenerator.getContrastPatterns(), objectsInClassesCount);
+	//cout << "Wybrana klasa to : " << scorer.chooseDecisionClass();
 
 	//for (int i = 0; i < objectsInClassesCount.size(); i++) {
 	//	cout << "klasa : " << i << " licznosc: " << objectsInClassesCount[i] << endl;

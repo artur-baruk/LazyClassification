@@ -2,7 +2,6 @@
 #define FIXEDHASHTREE_H_INCLUDED
 
 #include "Candidate.h"
-#include "Tuple.h"
 
 namespace FixedHashTree {
 
@@ -80,13 +79,13 @@ class HashTreeNode {
 
 		}
 
-		void countCompactSupport(Tuple* tuple, vector<int>* p_attrDense, int tClass, int currentPosition = 0)
+		void countCompactSupport(vector<int>* classCompactSupports, vector<int>* p_attrDense, int tClass, int currentPosition = 0)
 		{
 			for(int i = 0; i < candidates.size(); ++i)
 			{
 				if(candidates[i]->isSubset(p_attrDense)) //jezeli kandydat == podzbior
 				{
-					//tuple->setCPFlag();
+					(*classCompactSupports)[tClass]++;
 					return;
 				}
 			}
@@ -153,9 +152,9 @@ class HashTree {
 			root->countSupport(p_subset,tClass);
 		}
 
-		void countCompactSupport(Tuple* tuple, vector<int>* p_subset, int tClass)
+		void countCompactSupport(vector<int>* classCompactSupports, vector<int>* p_subset, int tClass)
 		{
-			root->countCompactSupport(tuple, p_subset, tClass);
+			root->countCompactSupport(classCompactSupports, p_subset, tClass);
 		}
 
 };

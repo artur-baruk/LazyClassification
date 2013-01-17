@@ -1,5 +1,8 @@
 #ifndef HASH_TREE_H
 #define HASH_TREE_H
+
+#include "HashTreeNode.h"
+
 using namespace std;
 
 /*
@@ -13,15 +16,15 @@ class HashTree {
 		int maxLevel;
 
 	public:
-		HashTree(vector<Candidate*> p_candidates, int k) //k to dlugosc wstawianych kandydatow
+		HashTree(vector<Candidate*>* p_candidates, int k) //k to dlugosc wstawianych kandydatow
 		{
 			maxLevel = k; // wysokosc drzewa
 			hash_arg = k+1; // bedziemy haszowac hash = argument MOD hash_arg
 
 			root = new HashTreeNode(0);
 
-			for ( int i = 0; i < p_candidates.size(); i++ ) {
-				insertCandidate(p_candidates[i]);
+			for ( int i = 0; i < p_candidates->size(); i++ ) {
+				insertCandidate((*p_candidates)[i]);
 			}
 		}
 

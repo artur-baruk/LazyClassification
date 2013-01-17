@@ -4,62 +4,34 @@
 #include <vector>
 #include <iostream>
 #include "Candidate.h"
+#include "Tuple.h"
 
 using namespace std;
 
 class ContrastPatternScorer {
 	private:
-		vector<Candidate*>& contrastPatterns;
+		vector<Candidate*>* contrastPatterns;
 		vector<int>& classCardinalityTable;
+		vector<Tuple*>& reducedTable;
+		vector<int> compactSupportOfClassesCounter;
 
-		double calculateCompactScore(Candidate* candidate) {
-			int numberOfTuplesInClass = classCardinalityTable[getContrastPatternDecisonClass(candidate)];
-			double x = (double) getContrastPatternSupport(candidate);
-			double y = ((double) getContrastPatternSupport(candidate)) / ((double) numberOfTuplesInClass);
-			return ((double) getContrastPatternSupport(candidate)) / ((double) numberOfTuplesInClass);
-		}
-
-		int getContrastPatternSupport(Candidate* candidate) {
-			for(int i = 0; i < candidate->getSupports()->size(); i++) {
-				if(candidate->getSupports()->at(i) != 0) {
-					return candidate->getSupports()->at(i);
-				}
+		void assignCompactSupportsToCandidatesFromAttrDense(FixedHashTree::HashTree* hashTree, vector<int>* compactSupportOfClassesCounter) {
+			for(unsigned long i = 0; i < reducedTable.size(); i++) {
+				reducedTable[i]->countCompactSupportFromAttrDense(compactSupportOfClassesCounter, hashTree);
 			}
-			return -1;		//candidate is not a contrast pattern
-		}
-
-		int getContrastPatternDecisonClass(Candidate* candidate) {
-			for(int i = 0; i < candidate->getSupports()->size(); i++) {
-				if(candidate->getSupports()->at(i) != 0) {
-					return i;
-				}
-			}
-			return -1;		//candidate is not a contrast pattern
 		}
 
 	public:
-		ContrastPatternScorer(vector<Candidate*>& tContrastPatterns, vector<int>& tClassCardinalityTable): contrastPatterns(tContrastPatterns),  classCardinalityTable(tClassCardinalityTable){ }
+		ContrastPatternScorer(vector<Tuple*>& tReducedTable, vector<Candidate*>* tContrastPatterns, vector<int>& tClassCardinalityTable): contrastPatterns(tContrastPatterns),  
+			classCardinalityTable(tClassCardinalityTable), reducedTable(tReducedTable){ }
 
 		int chooseDecisionClass() {
-			Candidate* maxScoreCandidate = NULL;
-			double maxScore = 0.0;
-			int maxScoreIndex = 0;
+			//FixedHashTree::HashTree* hashTree = new FixedHashTree::HashTree(contrastPatterns);
 
-			for(int i = 0; i < contrastPatterns.size(); i++) {
-				double currentCompactScore = calculateCompactScore(contrastPatterns[i]);
-				if(currentCompactScore > maxScore) {
-					maxScore = currentCompactScore;
-					maxScoreCandidate = contrastPatterns[i];
-					maxScoreIndex = i;
-				}
-			}
-
-			if(maxScoreCandidate != NULL) {
-				cout << "Max score con pattern index: " << maxScoreIndex << endl;
-				return getContrastPatternDecisonClass(maxScoreCandidate);
-			} else {
-				return -1;	//ERROR, there are no contrast patterns
-			}
+			//for(unsigned long i = 0; i < reducedTable.size(); i++) {
+			//	reducedTable[i]->subset_and_count(hashTree);
+			//}
+			return -1;
 		}
 
 };

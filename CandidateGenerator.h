@@ -117,11 +117,13 @@ class CandidateGenerator {
                 case Michal1:
                     assignSupportsToCandidatesFromAttrDense(fixedHashTree);
                     break;
-                case Michal2:
-                    assignCompactSupportsToCandidatesFromAttrDense(fixedHashTree);
-                    break;
+				//poniższy case przeniesiony do scorera
+                //case Michal2:
+                //    assignCompactSupportsToCandidatesFromAttrDense(fixedHashTree);
+                //    break;
 			}
-			assignSupportsToCandidates(fixedHashTree);
+			//poniższa linijka chybyba do wyrzucenia
+			//assignSupportsToCandidates(fixedHashTree);
 			t.stop();
 			t.start("Collect Contrast Pattern");
 			collectContrastPattern(candidatesLengthKPlusOne, candidatesLengthKPlusOneWithoutContrastPatterns);
@@ -162,12 +164,6 @@ class CandidateGenerator {
 		void assignSupportsToCandidatesFromAttrDense(FixedHashTree::HashTree* hashTree) {
 			for(unsigned long i = 0; i < reducedTable.size(); i++) {
 				reducedTable[i]->countSupportFromAttrDense(hashTree);
-			}
-		}
-
-		void assignCompactSupportsToCandidatesFromAttrDense(FixedHashTree::HashTree* hashTree) {
-			for(unsigned long i = 0; i < reducedTable.size(); i++) {
-				reducedTable[i]->countCompactSupportFromAttrDense(hashTree);
 			}
 		}
 
