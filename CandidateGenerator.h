@@ -1,8 +1,10 @@
 #ifndef CANDIDATE_GENERATOR_H
 #define CANDIDATE_GENERATOR_H
 
+#include <map>
 #include <vector>
 #include <iostream>
+#include <math.h>
 #include "Tuple.h"
 #include "Candidate.h"
 #include "FixedHashTree.h"
@@ -14,6 +16,12 @@ enum Method
     Przemo,
     Michal1,
     Michal2
+};
+
+enum OptimizationType {
+	No,
+	Generators,
+	Closures
 };
 
 /*
@@ -28,11 +36,12 @@ class CandidateGenerator {
 		const int numberOfClasses;
 		HashTree* hashTree;
 		FixedHashTree::HashTree* fixedHashTree;
+		map<unsigned long, vector<Candidate*>*> mapOfCandidatesForGenerators;
+		OptimizationType generatorOptimization;
 
 		void findOneLengthCandidates() {
 			if(reducedTable.size() == 0) {
 				cout << "Empty reduced table";
-				//exit(0);
 				return;
 			}
 
@@ -72,6 +81,11 @@ class CandidateGenerator {
 				}
 			}
 			candidates.push_back(candidatesOfLengthOne);
+
+			//jeżeli z optymalizacją generatorową
+			if(generatorOptimization == Generators) {
+				insertCandidatesToHashMapForGenerators(candidatesOfLengthOne);
+			}
 
 			cout << "Candidate One is joinable with candidate Two " << (*candidatesOfLengthOne)[0]->isJoinable((*candidatesOfLengthOne)[1]) << endl;
 		}
@@ -117,13 +131,7 @@ class CandidateGenerator {
                 case Michal1:
                     assignSupportsToCandidatesFromAttrDense(fixedHashTree);
                     break;
-				//poniższy case przeniesiony do scorera
-                //case Michal2:
-                //    assignCompactSupportsToCandidatesFromAttrDense(fixedHashTree);
-                //    break;
 			}
-			//poniższa linijka chybyba do wyrzucenia
-			//assignSupportsToCandidates(fixedHashTree);
 			t.stop();
 			t.start("Collect Contrast Pattern");
 			collectContrastPattern(candidatesLengthKPlusOne, candidatesLengthKPlusOneWithoutContrastPatterns);
@@ -139,6 +147,11 @@ class CandidateGenerator {
 			//chyba o to chodziło prawda? zeby tu gdzie wczesniej robilismy candidates.push_back(candidatesLengthKPlusOne);
 			//zapisac tylko niekontrastowych
 			candidates.at(candidates.size()-1)= candidatesLengthKPlusOneWithoutContrastPatterns;
+
+			//for generators
+			if(generatorOptimization == Generators) {
+				insertCandidatesToHashMapForGenerators(candidatesLengthKPlusOneWithoutContrastPatterns);
+			}
 			delete candidatesLengthKPlusOne;
 			return candidatesLengthKPlusOneWithoutContrastPatterns;
 		}
@@ -174,17 +187,38 @@ class CandidateGenerator {
 			attributes->push_back(second->getAttributes()->back());
 		}
 
-	public:
-		CandidateGenerator(vector<Tuple*>& tReducedTable, const int tNumberOfClasses): reducedTable(tReducedTable), numberOfClasses(tNumberOfClasses) { }
+		void performGeneratorOptimisation(vector<Candidate*>* candidatesWithoutContrastPatterns) {
+			//
+		}
 
-		void printSupportsOfCandiadtesLengthOne() {
-			for(int i = 0; i < supportsOfCandidates.size(); i++) {
-				cout << "Candidate " << i + 1 << " supports: ";
-				for (int j = 0; j < supportsOfCandidates[i].size(); j++) {
-					cout << supportsOfCandidates[i][j] << " ";
+		void insertCandidatesToHashMapForGenerators(vector<Candidate*>* candidates) {
+			unsigned long curentIndexInHashMap = 0;
+			for(int i = 0; i < candidates->size(); i++) {
+				Candidate* candidate = (*candidates)[i];
+				curentIndexInHashMap = calculateHashCode(candidate);
+				
+				if(mapOfCandidatesForGenerators.at(curentIndexInHashMap) == NULL) {
+					vector<Candidate*>* candidatesOfHashCode = new vector<Candidate*>();
+					candidatesOfHashCode->push_back(candidate);
+					mapOfCandidatesForGenerators.insert(pair<unsigned long,vector<Candidate*>*>(curentIndexInHashMap,candidatesOfHashCode));
+				} else {
+					mapOfCandidatesForGenerators.at(curentIndexInHashMap)->push_back(candidate);
 				}
-				cout << endl;
 			}
+		}
+
+		unsigned long calculateHashCode(Candidate* candidate) {
+			unsigned long sumOfHashCodesOfAttributes = 0;
+			const unsigned long one = 1;
+			for(int i = 0; i < candidate->getAttributes()->size(); i++) {
+				sumOfHashCodesOfAttributes += one << ( i % 32) + i + one << ((*candidate->getAttributes())[i] % 32) + (*candidate->getAttributes())[i] + 1; 
+			}
+			return sumOfHashCodesOfAttributes;
+		}
+
+	public:
+		CandidateGenerator(vector<Tuple*>& tReducedTable, const int tNumberOfClasses, OptimizationType tGeneratorOptimisation): reducedTable(tReducedTable), numberOfClasses(tNumberOfClasses) {
+			generatorOptimization = tGeneratorOptimisation;
 		}
 
 		void execute(Method method) {

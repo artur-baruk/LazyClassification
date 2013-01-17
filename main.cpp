@@ -88,7 +88,7 @@ int main() {
 }
 
 void candidateGeneratorTest(vector<Tuple*>& table_red, vector<int>& objectsInClassesCount) {
-	CandidateGenerator candidateGenerator = CandidateGenerator(table_red, 26);
+	CandidateGenerator candidateGenerator = CandidateGenerator(table_red, 26, No);
 	candidateGenerator.execute(Michal1);
 
 	int end;
