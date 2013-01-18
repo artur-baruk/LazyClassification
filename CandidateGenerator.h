@@ -138,10 +138,14 @@ private:
 		collectContrastPattern(candidatesLengthKPlusOne, candidatesLengthKPlusOneWithoutContrastPatterns);
 		t.stop();
 		t.start("Delete tree");
-		if(fixedHashTree != NULL)
+		if(fixedHashTree != NULL) {
 			delete fixedHashTree;
-		if(hashTree != NULL)
+			fixedHashTree = NULL;
+		}
+		if(hashTree != NULL) {
 			delete hashTree;
+			hashTree = NULL;
+		}
 		t.stop();
 		cout << "Number of candidates = " << candidatesLengthKPlusOne->size() << endl;
 		cout << "Number of candidates without contrast patterns = " << candidatesLengthKPlusOneWithoutContrastPatterns->size() << endl;
@@ -151,8 +155,8 @@ private:
 
 		//for generators
 		if(generatorOptimization == Generators) {
-			performGeneratorOptimisation(candidatesLengthKPlusOneWithoutContrastPatterns);
-			insertCandidatesToHashMapForGenerators(candidatesLengthKPlusOneWithoutContrastPatterns);
+			candidatesLengthKPlusOneWithoutContrastPatterns = performGeneratorOptimisation(candidatesLengthKPlusOneWithoutContrastPatterns);
+			insertCandidatesToHashMapForGenerators(candidatesLengthKPlusOneWithoutContrastPatterns);	
 		}
 		delete candidatesLengthKPlusOne;
 		return candidatesLengthKPlusOneWithoutContrastPatterns;
@@ -260,6 +264,8 @@ private:
 public:
 	CandidateGenerator(vector<Tuple*>& tReducedTable, const int tNumberOfClasses, OptimizationType tGeneratorOptimisation): reducedTable(tReducedTable), numberOfClasses(tNumberOfClasses) {
 		generatorOptimization = tGeneratorOptimisation;
+		hashTree = NULL;
+		fixedHashTree = NULL;
 	}
 
 	void execute(Method method) {
