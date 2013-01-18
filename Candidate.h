@@ -41,6 +41,15 @@ class Candidate {
 			return true;
 		}
 
+		bool equalsToSupports(vector<int>* tSupports) {
+			for(int k = 0; k < tSupports->size(); k++) {
+				if(supports->at(k) != tSupports->at(k)) {
+					return false;
+				}
+			}
+			return true;
+		}
+
 		//porownanie atrybutow kandydata z podzbiorem atrybutow transakcji
 		bool isSubset(vector<int>* p_attributes)
 		{
