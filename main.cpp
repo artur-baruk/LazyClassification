@@ -75,12 +75,12 @@ int main() {
 	(*attrs)[6] = 5.0;
 	(*attrs)[7] = 5.0;
 	(*attrs)[8] = 4.0;
-	(*attrs)[9] = 11.0;
+	(*attrs)[9] = 13.0;
 	(*attrs)[10] = 3.0;
 	(*attrs)[11] = 9.0;
 	(*attrs)[12] = 2.0;
 	(*attrs)[13] = 8.0;
-	(*attrs)[14] = 3.0;
+	(*attrs)[14] = 4.0;
 	(*attrs)[15] = 10.0;
 
 	getReducedTable(&table, t2);
@@ -99,7 +99,7 @@ int main() {
 }
 
 void candidateGeneratorTest(vector<Tuple*>& table_red, vector<int>& objectsInClassesCount) {
-	CandidateGenerator candidateGenerator = CandidateGenerator(table_red, 26, No);
+	CandidateGenerator candidateGenerator = CandidateGenerator(table_red, 26, Generators);
 	candidateGenerator.execute(Michal1);
 
 	ContrastPatternScorer scorer = ContrastPatternScorer(table_red, candidateGenerator.getContrastPatterns(), objectsInClassesCount);

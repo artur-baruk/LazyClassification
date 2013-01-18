@@ -196,19 +196,21 @@ private:
 	vector<Candidate*>* performGeneratorOptimisation(vector<Candidate*>* candidatesWithoutContrastPatterns) {
 		//we create a list from a vector to increase the speed of candidates removal
 		std::list<Candidate*> myList(candidatesWithoutContrastPatterns->begin(), candidatesWithoutContrastPatterns->end());
+		vector<Candidate*>* newSetOfCandidatesWithoutCP = new vector<Candidate*>();
 		std::list<Candidate*>::iterator it;
 		for(it = myList.begin(); it != myList.end(); it++) {
+			cout << "Candidate:" << (*it)->getAttributes()->size();
 			if(isForDeletionByGeneratorsOptimization(*it)) {
-				myList.erase(it);  
+				//myList.erase(it);  
+				delete *it;
+			} else {
+				newSetOfCandidatesWithoutCP->push_back(*it);
 			}
 		}
-
-		vector<Candidate*>* newSetOfCandidatesWithoutCP = new vector<Candidate*>();
-		std::copy(myList.begin(), myList.end(), newSetOfCandidatesWithoutCP->begin());
 		return newSetOfCandidatesWithoutCP;
 	}
 
-	bool isForDeletionByGeneratorsOptimization(Candidate* candidate) const {
+	bool isForDeletionByGeneratorsOptimization(Candidate* candidate) {
 		//generate subsets k-1 length
 		for(int i = 0; i < candidate->getAttributes()->size(); i++) {
 			vector<int> subset;
@@ -219,10 +221,12 @@ private:
 			}
 			unsigned long hashCode = calculateHashCode(&subset);
 			vector<Candidate*>* candidatesOfHashCode = mapOfCandidatesForGenerators.at(hashCode);
-			if(candidatesOfHashCode != NULL) {
+			if(mapOfCandidatesForGenerators.find(hashCode) != mapOfCandidatesForGenerators.end()) {
 				vector<Candidate*>* candidatesOfHashCode = mapOfCandidatesForGenerators.at(hashCode);
 				for(int k = 0; k < candidatesOfHashCode->size(); k++) {
 					if((*candidatesOfHashCode)[k]->attributesEquals(&subset) && (*candidatesOfHashCode)[k]->equalsToSupports(candidate->getSupports())) {		//sprawdz czy to ten sam, potem sprzawdz supporty
+						
+						cout << "Mozna usunac" << endl;
 						return true;
 					}
 				}
@@ -237,7 +241,7 @@ private:
 			Candidate* candidate = (*candidates)[i];
 			curentIndexInHashMap = calculateHashCode(candidate);
 
-			if(mapOfCandidatesForGenerators.at(curentIndexInHashMap) == NULL) {
+			if(mapOfCandidatesForGenerators.find(curentIndexInHashMap) == mapOfCandidatesForGenerators.end()) {
 				vector<Candidate*>* candidatesOfHashCode = new vector<Candidate*>();
 				candidatesOfHashCode->push_back(candidate);
 				mapOfCandidatesForGenerators.insert(pair<unsigned long,vector<Candidate*>*>(curentIndexInHashMap,candidatesOfHashCode));
@@ -247,12 +251,12 @@ private:
 		}
 	}
 
-	unsigned long calculateHashCode(Candidate* candidate) const {
+	unsigned long calculateHashCode(Candidate* candidate) {
 		vector<int>* attributes = candidate->getAttributes();
 		return calculateHashCode(attributes);
 	}
 
-	unsigned long calculateHashCode(vector<int>* attributes) const {
+	unsigned long calculateHashCode(vector<int>* attributes) {
 		unsigned long sumOfHashCodesOfAttributes = 0;
 		const unsigned long one = 1;
 		for(int i = 0; i < attributes->size(); i++) {
