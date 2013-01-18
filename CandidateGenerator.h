@@ -288,7 +288,7 @@ public:
 
 	vector<vector<Candidate*>*>& getCandidates() { return candidates; }
 
-	vector<Candidate*>& getContrastPatterns() { return contrastPatterns; }
+	vector<Candidate*>* getContrastPatterns() { return &contrastPatterns; }
 
 };
 

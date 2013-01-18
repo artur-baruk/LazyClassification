@@ -24,7 +24,11 @@ class ContrastPatternScorer {
 
 	public:
 		ContrastPatternScorer(vector<Tuple*>& tReducedTable, vector<Candidate*>* tContrastPatterns, vector<int>& tClassCardinalityTable): contrastPatterns(tContrastPatterns),  
-			classCardinalityTable(tClassCardinalityTable), reducedTable(tReducedTable){ }
+						classCardinalityTable(tClassCardinalityTable), reducedTable(tReducedTable){ 
+			for(int i = 0; i < classCardinalityTable.size(); i++) {
+				compactSupportOfClassesCounter.push_back(0);
+			}
+		}
 
 		int chooseDecisionClass() {
 			FixedHashTree::HashTree* hashTree = new FixedHashTree::HashTree(contrastPatterns, 0);
@@ -34,7 +38,7 @@ class ContrastPatternScorer {
 			double maxCompactScore = 0.0;
 			double currentComapctScore = 0.0;
 			for(int i = 0; i < classCardinalityTable.size(); i++) {
-				currentComapctScore = compactSupportOfClassesCounter[i] / classCardinalityTable[i];
+				currentComapctScore = ((double)compactSupportOfClassesCounter[i]) / classCardinalityTable[i];
 				if(currentComapctScore > maxCompactScore) {
 					maxCompactScore = currentComapctScore;
 					indexOfClass = i;
