@@ -83,7 +83,6 @@ int readTuples(const std::string& fileName, const std::vector<Type>& types, std:
         }
         tuples.push_back(t);
     }
-    //TODO po wszystkim trzeba znormalizowaa atrybuty typu real
 
 	inputFile.close();
 

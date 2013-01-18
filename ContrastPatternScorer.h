@@ -41,7 +41,8 @@ class ContrastPatternScorer {
 			double maxCompactScore = 0.0;
 			double currentComapctScore = 0.0;
 			for(int i = 0; i < classCardinalityTable.size(); i++) {
-				currentComapctScore = ((double)compactSupportOfClassesCounter[i]) / classCardinalityTable[i];
+				currentComapctScore = ((double)compactSupportOfClassesCounter[i]) / ((double)classCardinalityTable[i]);
+				cout << "score dla klsay: " << currentComapctScore << endl;
 				if(currentComapctScore > maxCompactScore) {
 					maxCompactScore = currentComapctScore;
 					indexOfClass = i;
@@ -49,7 +50,6 @@ class ContrastPatternScorer {
 			}
 			return indexOfClass;
 		}
-
 
 };
 

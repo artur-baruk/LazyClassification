@@ -53,10 +53,6 @@ int main() {
 
 	readTuples("letter.txt", types, table, &objectsInClassesCount);
 
-	//for(int i = 0; i < table.size(); ++i) {
-    //    cout<< "obj: " << i << " attr: " << table[i]->getAttributes()->at(1) << endl;
-	//}
-
 	t.stop();
 
 	t.start("Reduced table creation");
@@ -67,22 +63,23 @@ int main() {
 	//wiekszosc atrybutow z LITERY T, index klasy T = 19
 	//I,5,12,3,7,2,10,5,5,4,13,3,9,2,8,4,10
 	//N,4,6,6,6,6,6,9,5,3,6,4,8,7,8,4,9
+	//O,4,5,5,4,3,7,7,8,5,7,6,8,2,8,3,8
 	(*attrs)[0] = 4.0;
-	(*attrs)[1] = 6.0;
-	(*attrs)[2] = 6.0;
-	(*attrs)[3] = 6.0;
-	(*attrs)[4] = 6.0;
-	(*attrs)[5] = 6.0;
-	(*attrs)[6] = 9.0;
-	(*attrs)[7] = 5.0;
-	(*attrs)[8] = 3.0;
-	(*attrs)[9] = 9.0;
-	(*attrs)[10] = 4.0;
+	(*attrs)[1] = 5.0;
+	(*attrs)[2] = 5.0;
+	(*attrs)[3] = 4.0;
+	(*attrs)[4] = 3.0;
+	(*attrs)[5] = 7.0;
+	(*attrs)[6] = 7.0;
+	(*attrs)[7] = 8.0;
+	(*attrs)[8] = 5.0;
+	(*attrs)[9] = 7.0;
+	(*attrs)[10] = 6.0;
 	(*attrs)[11] = 8.0;
-	(*attrs)[12] = 7.0;
+	(*attrs)[12] = 2.0;
 	(*attrs)[13] = 8.0;
-	(*attrs)[14] = 4.0;
-	(*attrs)[15] = 10.0;
+	(*attrs)[14] = 3.0;
+	(*attrs)[15] = 8.0;
 
 	getReducedTable(&table, t2);
 
@@ -103,14 +100,10 @@ void candidateGeneratorTest(vector<Tuple*>& table_red, vector<int>& objectsInCla
 	CandidateGenerator candidateGenerator = CandidateGenerator(table_red, 26, Generators);
 	candidateGenerator.execute(Michal1);
 
+	Timer t;
+	t.start("SCORER execution time");
 	ContrastPatternScorer scorer = ContrastPatternScorer(table_red, candidateGenerator.getContrastPatterns(), objectsInClassesCount);
 	cout << "Wybrana klasa to : " << scorer.chooseDecisionClass();
-
-
-	//cout << "Wybrana klasa to : " << scorer.chooseDecisionClass();
-
-	//for (int i = 0; i < objectsInClassesCount.size(); i++) {
-	//	cout << "klasa : " << i << " licznosc: " << objectsInClassesCount[i] << endl;
-	//}
+	t.stop();
 }
 

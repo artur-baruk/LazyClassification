@@ -32,7 +32,7 @@ class CandidateGenerator {
 private:
 	vector<Tuple*>& reducedTable;
 	vector<vector<Candidate*>*> candidates;
-	vector<Candidate*> contrastPatterns;				//exists only in one class and not outside that class
+	vector<Candidate*> contrastPatterns;			//exists only in one class and not outside that class
 	vector<vector<int> > supportsOfCandidates;		//vector to store supports of candidates of length 1
 	const int numberOfClasses;
 	HashTree* hashTree;
@@ -83,7 +83,7 @@ private:
 		}
 		candidates.push_back(candidatesOfLengthOne);
 
-		//jeżeli z optymalizacją generatorową
+		//with generator optimisation
 		if(generatorOptimization == Generators) {
 			insertCandidatesToHashMapForGenerators(candidatesOfLengthOne);
 		}
@@ -105,7 +105,6 @@ private:
 				if((*candidatesLenkthK)[i]->isJoinable((*candidatesLenkthK)[j])) {
 					vector<int>* attributes =  new vector<int>();
 					joinCandidates(attributes, (*candidatesLenkthK)[i], (*candidatesLenkthK)[j]);
-					//cout << "Joining " << i+1 << " with " << j+1 << endl;
 					vector<int>* supports = new vector<int>(numberOfClasses);
 					Candidate* candidate = new Candidate(attributes,supports);
 					candidatesLengthKPlusOne->push_back(candidate);
@@ -149,8 +148,7 @@ private:
 		t.stop();
 		cout << "Number of candidates = " << candidatesLengthKPlusOne->size() << endl;
 		cout << "Number of candidates without contrast patterns = " << candidatesLengthKPlusOneWithoutContrastPatterns->size() << endl;
-		//chyba o to chodziło prawda? zeby tu gdzie wczesniej robilismy candidates.push_back(candidatesLengthKPlusOne);
-		//zapisac tylko niekontrastowych
+		
 		candidates.at(candidates.size()-1)= candidatesLengthKPlusOneWithoutContrastPatterns;
 
 		//for generators
@@ -202,13 +200,10 @@ private:
 		vector<Candidate*>* newSetOfCandidatesWithoutCP = new vector<Candidate*>();
 		std::vector<Candidate*>::iterator it;
 		for(it = candidatesWithoutContrastPatterns->begin(); it != candidatesWithoutContrastPatterns->end(); ++it) {
-			//cout << "hehehe123" << endl;
-			//cout << "Candidate:" << (*it)->getAttributes()->size();
 			if(!isForDeletionByGeneratorsOptimization(*it)) {
 				newSetOfCandidatesWithoutCP->push_back(*it);
 			}
 		}
-		//cout << "koniec :D" << endl;
 		return newSetOfCandidatesWithoutCP;
 	}
 
@@ -222,23 +217,15 @@ private:
 					subset.push_back((*candidate->getAttributes())[k]);
 				}
 			}
-			//cout << "after pushing" << endl;
 			unsigned long hashCode = calculateHashCode(&subset);
-			//cout << "after hashing" << endl;
-			//vector<Candidate*>* candidatesOfHashCode = mapOfCandidatesForGenerators.at(hashCode);
-			//cout << "after ty" << endl;
 			if(mapOfCandidatesForGenerators.find(hashCode) != mapOfCandidatesForGenerators.end()) {
-				//cout << "im inside!" << endl;
 				vector<Candidate*>* candidatesOfHashCode = mapOfCandidatesForGenerators.at(hashCode);
 				for(int k = 0; k < candidatesOfHashCode->size(); k++) {
-					if((*candidatesOfHashCode)[k]->attributesEquals(&subset) && (*candidatesOfHashCode)[k]->equalsToSupports(candidate->getSupports())) {		//sprawdz czy to ten sam, potem sprzawdz supporty
-						
-						//cout << "Mozna usunac" << endl;
+					if((*candidatesOfHashCode)[k]->attributesEquals(&subset) && (*candidatesOfHashCode)[k]->equalsToSupports(candidate->getSupports())) {
 						return true;
 					}
 				}
 			}
-			//cout << "im outside!" << endl;
 		}
 		return false;
 	}
