@@ -154,9 +154,13 @@ private:
 		candidates.at(candidates.size()-1)= candidatesLengthKPlusOneWithoutContrastPatterns;
 
 		//for generators
+		vector<Candidate*>* candidatesLengthPlusOneMinusGeneratorSupersets;
 		if(generatorOptimization == Generators) {
-			candidatesLengthKPlusOneWithoutContrastPatterns = performGeneratorOptimisation(candidatesLengthKPlusOneWithoutContrastPatterns);
-			insertCandidatesToHashMapForGenerators(candidatesLengthKPlusOneWithoutContrastPatterns);	
+
+			candidatesLengthPlusOneMinusGeneratorSupersets = performGeneratorOptimisation(candidatesLengthKPlusOneWithoutContrastPatterns);
+			insertCandidatesToHashMapForGenerators(candidatesLengthPlusOneMinusGeneratorSupersets);	
+			delete candidatesLengthKPlusOne;
+			return candidatesLengthPlusOneMinusGeneratorSupersets;
 		}
 		delete candidatesLengthKPlusOne;
 		return candidatesLengthKPlusOneWithoutContrastPatterns;
@@ -195,18 +199,16 @@ private:
 
 	vector<Candidate*>* performGeneratorOptimisation(vector<Candidate*>* candidatesWithoutContrastPatterns) {
 		//we create a list from a vector to increase the speed of candidates removal
-		std::list<Candidate*> myList(candidatesWithoutContrastPatterns->begin(), candidatesWithoutContrastPatterns->end());
 		vector<Candidate*>* newSetOfCandidatesWithoutCP = new vector<Candidate*>();
-		std::list<Candidate*>::iterator it;
-		for(it = myList.begin(); it != myList.end(); it++) {
-			cout << "Candidate:" << (*it)->getAttributes()->size();
-			if(isForDeletionByGeneratorsOptimization(*it)) {
-				//myList.erase(it);  
-				delete *it;
-			} else {
+		std::vector<Candidate*>::iterator it;
+		for(it = candidatesWithoutContrastPatterns->begin(); it != candidatesWithoutContrastPatterns->end(); ++it) {
+			//cout << "hehehe123" << endl;
+			//cout << "Candidate:" << (*it)->getAttributes()->size();
+			if(!isForDeletionByGeneratorsOptimization(*it)) {
 				newSetOfCandidatesWithoutCP->push_back(*it);
 			}
 		}
+		//cout << "koniec :D" << endl;
 		return newSetOfCandidatesWithoutCP;
 	}
 
@@ -214,23 +216,29 @@ private:
 		//generate subsets k-1 length
 		for(int i = 0; i < candidate->getAttributes()->size(); i++) {
 			vector<int> subset;
+			subset.reserve(candidate->getAttributes()->size()-1);
 			for(int k = 0; k < candidate->getAttributes()->size(); k++) {
 				if(k != i) {
 					subset.push_back((*candidate->getAttributes())[k]);
 				}
 			}
+			//cout << "after pushing" << endl;
 			unsigned long hashCode = calculateHashCode(&subset);
-			vector<Candidate*>* candidatesOfHashCode = mapOfCandidatesForGenerators.at(hashCode);
+			//cout << "after hashing" << endl;
+			//vector<Candidate*>* candidatesOfHashCode = mapOfCandidatesForGenerators.at(hashCode);
+			//cout << "after ty" << endl;
 			if(mapOfCandidatesForGenerators.find(hashCode) != mapOfCandidatesForGenerators.end()) {
+				//cout << "im inside!" << endl;
 				vector<Candidate*>* candidatesOfHashCode = mapOfCandidatesForGenerators.at(hashCode);
 				for(int k = 0; k < candidatesOfHashCode->size(); k++) {
 					if((*candidatesOfHashCode)[k]->attributesEquals(&subset) && (*candidatesOfHashCode)[k]->equalsToSupports(candidate->getSupports())) {		//sprawdz czy to ten sam, potem sprzawdz supporty
 						
-						cout << "Mozna usunac" << endl;
+						//cout << "Mozna usunac" << endl;
 						return true;
 					}
 				}
 			}
+			//cout << "im outside!" << endl;
 		}
 		return false;
 	}

@@ -7,6 +7,9 @@
 #include "Tuple.h"
 #include "FixedHashTree.h"
 
+
+#define HASH_DISTRIBUTE 371-1
+
 using namespace std;
 
 class ContrastPatternScorer {
@@ -31,7 +34,7 @@ class ContrastPatternScorer {
 		}
 
 		int chooseDecisionClass() {
-			FixedHashTree::HashTree* hashTree = new FixedHashTree::HashTree(contrastPatterns, 0);
+			FixedHashTree::HashTree* hashTree = new FixedHashTree::HashTree(contrastPatterns, HASH_DISTRIBUTE);
 			assignCompactSupportsToCandidatesFromAttrDense(hashTree, &compactSupportOfClassesCounter);
 
 			int indexOfClass = 0;
