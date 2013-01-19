@@ -69,16 +69,16 @@ int main() {
 	(*attrs)[2] = 5.0;
 	(*attrs)[3] = 4.0;
 	(*attrs)[4] = 3.0;
-	(*attrs)[5] = 7.0;
-	(*attrs)[6] = 7.0;
+	(*attrs)[5] = 6.0;
+	(*attrs)[6] = 6.0;
 	(*attrs)[7] = 8.0;
 	(*attrs)[8] = 5.0;
-	(*attrs)[9] = 7.0;
+	(*attrs)[9] = 6.0;
 	(*attrs)[10] = 6.0;
 	(*attrs)[11] = 8.0;
 	(*attrs)[12] = 2.0;
 	(*attrs)[13] = 8.0;
-	(*attrs)[14] = 3.0;
+	(*attrs)[14] = 2.0;
 	(*attrs)[15] = 8.0;
 
 	getReducedTable(&table, t2);
@@ -98,7 +98,7 @@ int main() {
 
 void candidateGeneratorTest(vector<Tuple*>& table_red, vector<int>& objectsInClassesCount) {
 	CandidateGenerator candidateGenerator = CandidateGenerator(table_red, 26, Generators);
-	candidateGenerator.execute(Michal1);
+	candidateGenerator.execute(Przemo);
 
 	Timer t;
 	t.start("SCORER execution time");

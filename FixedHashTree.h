@@ -19,7 +19,6 @@ class HashTreeNode {
 	public:
         HashTreeNode(int hash_arg, int candidateLenght = 0, int level = 0) : hash_arg(hash_arg), candidateLenght(candidateLenght), level(level) {
             candidates.reserve(2);
-			//cout << "*****LEVEL" << level << endl;
         }
 
         ~HashTreeNode() //jakos tak bym rozjebal potomkow, dla candidates tylko czyscimy wektor

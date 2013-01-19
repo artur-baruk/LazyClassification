@@ -93,12 +93,12 @@ private:
 
 	/*
 	* Generates candidates of length k+1 based on candidates of length k.
-	* Return true if there are at least two candidates generated (but not contast patterns).
+	* Return true if there are at least two candidates generated (but not contrast patterns).
 	*/
 	vector<Candidate*>* generateCandidatesLengthKPlusOne(Method method, vector<Candidate*>* candidatesLenkthK) {
 		vector<Candidate*>* candidatesLengthKPlusOne =  new vector<Candidate*>();			//it can contain contrast patterns as well
 		vector<Candidate*>* candidatesLengthKPlusOneWithoutContrastPatterns =  new vector<Candidate*>();
-		Timer t;
+						Timer t;
 		t.start("Generate candidates");
 		for(int i = 0; i < candidatesLenkthK->size(); i++) {
 			for(int j = i + 1; j < candidatesLenkthK->size(); j++) {
@@ -111,19 +111,18 @@ private:
 				}
 			}
 		}
-		candidates.push_back(candidatesLengthKPlusOne);
-		t.stop();
-		t.start("Build hash tree");
+						t.stop();
+						t.start("Build hash tree");
 		switch(method) {
 		case Przemo:
-			hashTree = new HashTree(candidatesLengthKPlusOne, candidates.size());
+			hashTree = new HashTree(candidatesLengthKPlusOne, candidates.size() + 1);
 			break;
 		case Michal1: case Michal2:
-			fixedHashTree = new FixedHashTree::HashTree(candidatesLengthKPlusOne, candidates.size());
+			fixedHashTree = new FixedHashTree::HashTree(candidatesLengthKPlusOne, candidates.size() + 1);
 			break;
 		}
-		t.stop();
-		t.start("Subset and count support");
+						t.stop();
+						t.start("Subset and count support");
 		switch(method) {
 		case Przemo:
 			assignSupportsToCandidates(hashTree);
@@ -132,11 +131,11 @@ private:
 			assignSupportsToCandidatesFromAttrDense(fixedHashTree);
 			break;
 		}
-		t.stop();
-		t.start("Collect Contrast Pattern");
-		collectContrastPattern(candidatesLengthKPlusOne, candidatesLengthKPlusOneWithoutContrastPatterns);
-		t.stop();
-		t.start("Delete tree");
+						t.stop();
+						t.start("Collect Contrast Pattern");
+		collectContrastPattern(candidatesLengthKPlusOne, candidatesLengthKPlusOneWithoutContrastPatterns);	//and put into candidatesLengthKPlusOneWithoutContrastPatterns
+						t.stop();
+						t.start("Delete tree");
 		if(fixedHashTree != NULL) {
 			delete fixedHashTree;
 			fixedHashTree = NULL;
@@ -145,21 +144,22 @@ private:
 			delete hashTree;
 			hashTree = NULL;
 		}
-		t.stop();
-		cout << "Number of candidates = " << candidatesLengthKPlusOne->size() << endl;
-		cout << "Number of candidates without contrast patterns = " << candidatesLengthKPlusOneWithoutContrastPatterns->size() << endl;
+						t.stop();
+						cout << "Number of candidates = " << candidatesLengthKPlusOne->size() << endl;
+						cout << "Number of candidates without contrast patterns = " << candidatesLengthKPlusOneWithoutContrastPatterns->size() << endl;
 		
-		candidates.at(candidates.size()-1)= candidatesLengthKPlusOneWithoutContrastPatterns;
-
 		//for generators
-		vector<Candidate*>* candidatesLengthPlusOneMinusGeneratorSupersets;
 		if(generatorOptimization == Generators) {
-
+			vector<Candidate*>* candidatesLengthPlusOneMinusGeneratorSupersets;
 			candidatesLengthPlusOneMinusGeneratorSupersets = performGeneratorOptimisation(candidatesLengthKPlusOneWithoutContrastPatterns);
 			insertCandidatesToHashMapForGenerators(candidatesLengthPlusOneMinusGeneratorSupersets);	
+			candidates.push_back(candidatesLengthPlusOneMinusGeneratorSupersets);
+			cout << "GEN candidates length of set: " << candidatesLengthPlusOneMinusGeneratorSupersets->size();
 			delete candidatesLengthKPlusOne;
 			return candidatesLengthPlusOneMinusGeneratorSupersets;
 		}
+
+		candidates.push_back(candidatesLengthKPlusOneWithoutContrastPatterns);
 		delete candidatesLengthKPlusOne;
 		return candidatesLengthKPlusOneWithoutContrastPatterns;
 	}
@@ -269,7 +269,7 @@ public:
 
 	void execute(Method method) {
 		Timer t;
-		t.start("Candidates of lenght 1 generation & support count");
+		t.start("Candidates of length 1 generation & support count");
 		findOneLengthCandidates();
 		t.stop();
 		if(candidates[0]->size() >= 2) {

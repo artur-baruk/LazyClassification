@@ -34,15 +34,20 @@ class ContrastPatternScorer {
 		}
 
 		int chooseDecisionClass() {
+			Timer t;
+			t.start("hash tree build");
 			FixedHashTree::HashTree* hashTree = new FixedHashTree::HashTree(contrastPatterns, HASH_DISTRIBUTE);
+			t.stop();
+			t.start("assign compact supports");
 			assignCompactSupportsToCandidatesFromAttrDense(hashTree, &compactSupportOfClassesCounter);
+			t.stop();
 
 			int indexOfClass = 0;
 			double maxCompactScore = 0.0;
 			double currentComapctScore = 0.0;
 			for(int i = 0; i < classCardinalityTable.size(); i++) {
 				currentComapctScore = ((double)compactSupportOfClassesCounter[i]) / ((double)classCardinalityTable[i]);
-				cout << "score dla klsay: " << currentComapctScore << endl;
+				cout << "score dla klasy " << i << ": " << currentComapctScore << endl;
 				if(currentComapctScore > maxCompactScore) {
 					maxCompactScore = currentComapctScore;
 					indexOfClass = i;
