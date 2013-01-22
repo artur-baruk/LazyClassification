@@ -56,7 +56,7 @@ class Tuple {
 			{
 				if(attributes->at(i) !=  -1)
 				{
-					attributes_dense->push_back(i);
+					attributes_dense->push_back(i+1);
 				}
 			}
 
