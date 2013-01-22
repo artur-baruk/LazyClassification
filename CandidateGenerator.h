@@ -87,8 +87,6 @@ private:
 		if(generatorOptimization == Generators) {
 			insertCandidatesToHashMapForGenerators(candidatesOfLengthOne);
 		}
-
-		cout << "Candidate One is joinable with candidate Two " << (*candidatesOfLengthOne)[0]->isJoinable((*candidatesOfLengthOne)[1]) << endl;
 	}
 
 	/*
@@ -108,6 +106,7 @@ private:
 					vector<int>* supports = new vector<int>(numberOfClasses);
 					Candidate* candidate = new Candidate(attributes,supports);
 					candidatesLengthKPlusOne->push_back(candidate);
+					cout << "pushing candidate" << endl;
 				}
 			}
 		}
@@ -119,6 +118,7 @@ private:
 			break;
 		case Michal1: case Michal2:
 			fixedHashTree = new FixedHashTree::HashTree(candidatesLengthKPlusOne, candidates.size() + 1);
+			cout << endl << endl;
 			break;
 		}
 						t.stop();

@@ -105,6 +105,7 @@ class HashTreeNode {
 		}
 
 		void print() {
+			cout << "#######NODE:" << endl;
 		    for(map<int,HashTreeNode*>::iterator it = children.begin(); it != children.end(); ++it) {
                 it->second->print();
 		    }
@@ -161,6 +162,10 @@ class HashTree {
 			root->countCompactSupport(classCompactSupports, p_subset, tClass);
 		}
 
+
+		void printTree() {
+			root->print();
+		}
 };
 
 
