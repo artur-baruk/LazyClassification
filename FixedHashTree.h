@@ -2,7 +2,6 @@
 #define FIXEDHASHTREE_H_INCLUDED
 
 #include <climits>
-#include "Candidate.h"
 
 namespace FixedHashTree {
 

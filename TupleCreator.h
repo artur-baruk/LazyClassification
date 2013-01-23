@@ -1,11 +1,11 @@
-#ifndef TUPLECREATOR_H_INCLUDED
-#define TUPLECREATOR_H_INCLUDED
+#ifndef TUPLECREATOR_H
+#define TUPLECREATOR_H
 
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <set>
 #include "stringtools.h"
-#include "Tuple.h"
 
 const float null_value = -1.0f;
 
@@ -41,6 +41,7 @@ int readTuples(const std::string& fileName, const std::vector<Type>& types, std:
 
     std::vector<std::string> keys;
     std::vector<std::vector<std::string> > attrsKeys(types.size());
+    std::set<int> realAttributes;
 
     while(!inputFile.eof())
     {
@@ -68,6 +69,7 @@ int readTuples(const std::string& fileName, const std::vector<Type>& types, std:
                     t->setAttribute(attrCount++, strToFloat(strs[i]));
                     break;
                 case AttrReal:
+                    realAttributes.insert(attrCount);
                     t->setAttribute(attrCount++, strToFloat(strs[i]));
                     break;
                 case AttrCategorical:
@@ -82,6 +84,41 @@ int readTuples(const std::string& fileName, const std::vector<Type>& types, std:
             }
         }
         tuples.push_back(t);
+    }
+
+    if(!realAttributes.empty()) {
+
+        for(std::set<int>::iterator it = realAttributes.begin(); it != realAttributes.end(); ++it) {
+            float max = INT_MIN;
+            float min = INT_MAX;
+            float v;
+            for(int i = 0; i < tuples.size(); ++i) {
+                v = tuples[i]->getAttribute(*it);
+                if(v > max)
+                    max = v;
+                if(v < min)
+                    min = v;
+            
+				float interval = max - min;
+				if(interval > 100) {
+					//do zakresu 0:100
+					float part = interval / 100;
+					v = tuples[i]->getAttribute(*it);
+					v -= min;
+					v /= part;
+					tuples[i]->setAttribute(*it, v);
+				} else if(min < 0) {
+				 //podnosimy wartosci o -min
+					for(int i = 0; i < tuples.size(); ++i) {
+						v = tuples[i]->getAttribute(*it);
+						tuples[i]->setAttribute(*it, v - min);
+					}
+				} else {
+                //przedzial jest mniejszy niz 101 i sa to liczby dodatanie - nic nie robimy
+				}
+			}
+        }
+
     }
 
 	inputFile.close();
@@ -100,4 +137,31 @@ void getReducedTable(std::vector<Tuple*>* table, Tuple* tuple) {
 	}
 }
 
-#endif // TUPLECREATOR_H_INCLUDED
+void readDataDescription(string fileName,std::vector<Type>* types)
+{
+	types->push_back(AttrClass);
+    types->push_back(AttrInteger);
+    types->push_back(AttrInteger);
+    types->push_back(AttrInteger);
+    types->push_back(AttrInteger);
+}
+
+
+void getTuplesToBeClsf(string fileName,std::vector<Tuple*>* tuples_to_be_clsf)
+{
+			Tuple* t2 = new Tuple(4, -1);
+			vector<float>* attrs = t2->getAttributes();
+
+
+			(*attrs)[0] = 3.0;
+			(*attrs)[1] = 3.0;
+			(*attrs)[2] = 1.0;
+			(*attrs)[3] = 2.0;
+			
+			tuples_to_be_clsf->push_back(t2);
+
+}
+
+
+
+#endif

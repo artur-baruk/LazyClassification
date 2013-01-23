@@ -3,9 +3,6 @@
 
 using namespace std;
 
-/*
- *
- */
 
 class HashTreeNode {
 

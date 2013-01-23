@@ -2,10 +2,10 @@
 #define LAZY_CLASSIFICATOR_H
 
 #include <iostream>
-#include "Tuple.h"
+#include "Timer.h"
+#include "Combination.h"
 #include "Candidate.h"
 #include "Tuple.h"
-#include "LazyClassificator.h"
 #include "TupleCreator.h"
 #include "CandidateGenerator.h"
 #include "ContrastPatternScorer.h"
