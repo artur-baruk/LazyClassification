@@ -4,6 +4,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <set>
 #include "stringtools.h"
 #include "Tuple.h"
 
@@ -41,6 +42,7 @@ int readTuples(const std::string& fileName, const std::vector<Type>& types, std:
 
     std::vector<std::string> keys;
     std::vector<std::vector<std::string> > attrsKeys(types.size());
+    std::set<int> realAttributes;
 
     while(!inputFile.eof())
     {
@@ -68,6 +70,7 @@ int readTuples(const std::string& fileName, const std::vector<Type>& types, std:
                     t->setAttribute(attrCount++, strToFloat(strs[i]));
                     break;
                 case AttrReal:
+                    realAttributes.insert(attrCount);
                     t->setAttribute(attrCount++, strToFloat(strs[i]));
                     break;
                 case AttrCategorical:
@@ -82,6 +85,41 @@ int readTuples(const std::string& fileName, const std::vector<Type>& types, std:
             }
         }
         tuples.push_back(t);
+    }
+
+    if(!realAttributes.empty()) {
+
+        for(std::set<int>::iterator it = realAttributes.begin(); it != realAttributes.end(); ++it) {
+            float max = INT_MIN;
+            float min = INT_MAX;
+            float v;
+            for(int i = 0; i < tuples.size(); ++i) {
+                v = tuples[i]->getAttribute(*it);
+                if(v > max)
+                    max = v;
+                if(v < min)
+                    min = v;
+            }
+            float interval = max - min;
+            if(interval > 100) {
+                //do zakresu 0:100
+                float part = interval / 100;
+                v = tuples[i]->getAttribute(*it);
+                v -= min;
+                v /= part;
+                tuples[i]->setAttribute(*it, v);
+            } else if(min < 0) {
+                //podnosimy wartosci o -min
+                for(int i = 0; i < tuples.size(); ++i) {
+                    v = tuples[i]->getAttribute(*it);
+                    tuples[i]->setAttribute(*it, v - min);
+                }
+            } else {
+                //przedzial jest mniejszy niz 101 i sa to liczby dodatanie - nic nie robimy
+            }
+
+        }
+
     }
 
 	inputFile.close();
