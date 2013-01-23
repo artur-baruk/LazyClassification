@@ -219,7 +219,7 @@ private:
 			}
 			unsigned long hashCode = calculateHashCode(&subset);
 			if(mapOfCandidatesForGenerators.find(hashCode) != mapOfCandidatesForGenerators.end()) {
-				vector<Candidate*>* candidatesOfHashCode = mapOfCandidatesForGenerators.at(hashCode);
+				vector<Candidate*>* candidatesOfHashCode = mapOfCandidatesForGenerators[hashCode];
 				for(int k = 0; k < candidatesOfHashCode->size(); k++) {
 					if((*candidatesOfHashCode)[k]->attributesEquals(&subset) && (*candidatesOfHashCode)[k]->equalsToSupports(candidate->getSupports())) {
 						return true;
@@ -241,7 +241,7 @@ private:
 				candidatesOfHashCode->push_back(candidate);
 				mapOfCandidatesForGenerators.insert(pair<unsigned long,vector<Candidate*>*>(curentIndexInHashMap,candidatesOfHashCode));
 			} else {
-				mapOfCandidatesForGenerators.at(curentIndexInHashMap)->push_back(candidate);
+				mapOfCandidatesForGenerators[curentIndexInHashMap]->push_back(candidate);
 			}
 		}
 	}
